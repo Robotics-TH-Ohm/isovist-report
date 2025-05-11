@@ -1,0 +1,8 @@
+{
+  "[typst]": {
+    "editor.formatOnSave": true
+  },
+  "tinymist.formatterMode": "typstyle",
+  "tinymist.preview.invertColors": "auto",
+  "tinymist.exportPdf": "onSave"
+}

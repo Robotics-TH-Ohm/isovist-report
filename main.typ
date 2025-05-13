@@ -36,17 +36,44 @@
 #set align(top + left)
 
 #set par(justify: true)
+
 = Einleitung
 
-Zuverlässige und genaue Selbstlokalisierung ist ein Grundpfeiler, damit autonome mobile Roboter ihre Aufgaben effektiv in komplexen Umgebungen ausführen können. Die Kenntnis der genauen Position ist unerlässlich für Navigation, Aufgabenausführung und Interaktion mit der Umgebung. Eine signifikante Herausforderung in der mobilen Robotik stellt jedoch das sogenannte Kidnapped-Robot-Problem dar. Dieses Szenario tritt auf, wenn die Position eines Roboters unerwartet und ohne dessen Steuerung verändert wird, beispielsweise durch manuelles Versetzen an einen unbekannten Ort. In solchen Situationen verliert der Roboter seine aktuelle Positionsreferenz und muss sich auf seine Bordsensoren verlassen, um seine Position innerhalb einer vorhandenen Karte der Umgebung wiederherzustellen - ein Prozess, der als globale Lokalisierung oder Relokalisierung bezeichnet wird. Die effektive Lösung des Kidnapped-Robot-Problems ist entscheidend für die Gewährleistung der Robustheit und Zuverlässigkeit autonomer Robotersysteme in unvorhersehbaren realen Umgebungen.
+Für einen mobilen Roboter, der autonom in seiner Umgebung agieren soll, ist die Fähigkeit, seinen eigenen Standort exakt zu kennen, von fundamentaler Bedeutung. Man könnte es als die Grundvoraussetzung für jede sinnvolle Interaktion mit der Welt bezeichnen. Ohne ein zuverlässiges Wissen um die eigene Position innerhalb einer vorhandenen Umgebungskarte ist die Ausführung selbst grundlegender Aufgaben wie Navigation zu einem Zielpunkt oder die Interaktion mit Objekten schlichtweg unmöglich. Von der autonomen Reinigung über die Zustellung von Gütern bis hin zu komplexen Führungsaufgaben - all dies erfordert eine kontinuierliche und präzise Selbstverortung. Während die Lokalisierung im Außenbereich durch globale Navigationssatellitensysteme (GNSS) wie GPS weitgehend gelöst ist, stellt sie in Innenräumen nach wie vor eine signifikante Herausforderung dar.
 
-Zur Lösung des Kidnapped-Robot-Problems sind Ansätze zur globalen Lokalisierung erforderlich. Etablierte probabilistische Verfahren wie die Markov-Lokalisierung @burgard_MarkovLocalizationMobile_1999 und ihre effiziente Variante, die Monte-Carlo-Lokalisierung @dellaert_MonteCarlolocalization_1999, ermöglichen dies, indem sie eine Wahrscheinlichkeitsverteilung über mögliche Roboterpositionen verwalten. Ein zentraler Aspekt ist hierbei das Perzeptionsmodell, das die Wahrscheinlichkeit von Sensordaten an einem bestimmten Ort bewertet. Die Fähigkeit dieses Modells, Orte eindeutig zu charakterisieren, ist somit entscheidend für eine erfolgreiche Relokalisierung nach einer "Entführung".
+Mit der fortschreitenden Reife der Lokalisierungsalgorithmen rückt die Forschung zunehmend komplexeren und herausfordernden Szenarien zu Leibe. Ein besonders relevantes und oft zitiertes Beispiel ist das sogenannte "Kidnapped Robot Problem" (KRP). Dieses Szenario beschreibt eine Situation, in der der Roboter unvermittelt an einen ihm unbekannten Ort innerhalb der Arbeitsumgebung versetzt wird oder aus anderen Gründen seine momentane Position vollständig verliert. Die erfolgreiche Bewältigung des KRP wird daher oft als Gradmesser für die Fähigkeit eines Roboters gesehen, sich nach einem schwerwiegenden Lokalisierungsfehler schnell und eigenständig wieder zu reorientieren und seine Arbeit fortzusetzen. Dieses Problem unterstreicht die Notwendigkeit von Lokalisierungsansätzen, die nicht nur im Normalbetrieb sondern auch in Extremfall präzise sind.
 
-Die Entwicklung robuster und unterscheidbarer Ortsmerkmale aus Sensordaten stellt jedoch eine inhärente Herausforderung dar, insbesondere in komplexen oder dynamischen Umgebungen. Herkömmliche Ansätze zur Merkmalsextraktion können durch Rauschen, Sensorbeschränkungen oder unmodellierte dynamische Elemente beeinträchtigt werden. Dies erschwert die eindeutige Wiedererkennung von Orten und schränkt somit die Fähigkeit zur zuverlässigen Relokalisierung nach einem Kidnapping-Ereignis ein.
+Vor diesem Hintergrund widmen wir uns in der vorliegenden Arbeit der Untersuchung eines neuartigen Ansatzes zur Indoor-Lokalisierung, der speziell für die Bewältigung des Kidnapped Robot Problems konzipiert ist. Im Mittelpunkt steht die Nutzung von Isovisten in Verbindung mit Lidar-Sensorik. Isovisten sind im Wesentlichen eine geometrische Beschreibung des sichtbaren Raums von einem bestimmten Punkt aus. Sie erfassen die Form und Struktur der unmittelbaren Umgebung, indem sie alle Punkte definieren, die vom Beobachter direkt eingesehen werden können. Dieses Konzept ist besonders relevant, da die Struktur des sichtbaren Raums eine charakteristische Signatur des Standorts liefert, die auch nach einer "Entführung" wiedererkannt werden kann. Mit Hilfe eines Lidar-Sensors lässt sich diese Isovisten-Geometrie präzise erfassen und analysieren.
 
-Um diesen Herausforderungen bei der Ortscharakterisierung zu begegnen, untersuchen wir in dieser Arbeit das Potenzial von Isovisten als Merkmalsrepräsentation für das Kidnapped-Robot-Problem. Isovisten, ursprünglich ein Konzept aus der Architekturtheorie @benedikt_takeholdspace_1979, beschreiben den von einem Standpunkt aus sichtbaren Raum und erfassen dessen geometrische Eigenschaften. Wir konzentrieren uns dabei auf die Extraktion von Isovist-Deskriptoren aus Lidar-Scans, um eine reichhaltige und strukturierte Beschreibung eines Ortes zu gewinnen, die für die Wiedererkennung genutzt werden kann.
+Unsere zentrale Forschungsfrage, die in dieser Arbeit adressiert wird, lautet daher: In welchem Maße kann ein auf der Analyse von Lidar-basierten Isovisten basierender Ansatz dazu beitragen, das "Kidnapped Robot Problem" in einer Indoor-Umgebung robust und effizient zu lösen?
 
-Unsere Hypothese ist, dass die Integration von Lidar-basierten Isovist-Deskriptoren in das Perzeptionsmodell eines probabilistischen Lokalisierungsverfahrens die Fähigkeit des Roboters zur zuverlässigen Wiedererkennung von Orten verbessert. Dies gilt insbesondere für die anspruchsvolle Aufgabe der Relokalisierung nach einer "Entführung", wobei die Eignung robuster Isovist-Deskriptoren für diesen Zweck im Rahmen dieser Arbeit untersucht wird.
+= Stand der Technik
+
+== Das Kidnapped Robot Problem (KRP)
+- symmetry problem
+
+
+== Isovisten in Robotik
+- Isovists like how human interact and remember shapes.
+
+
+= Methodik
+
+== 2D-LIDAR-Scans
+
+== Extraktion von Isovist-Merkmalen
+
+== Grid
+
+== Relokalisierung
+
+= Experimentet
+
+= Ergebnisse
+
+= Diskussion
+
+= Fazit und Ausblick
 
 #pagebreak(weak: true)
 #bibliography("/refs.bib", style: "ieee", title: "Literaturverzeichnis")

@@ -87,11 +87,11 @@ Als zweite Variante kann eine eingeschränkte zufällige Verteilung der Grid-Kno
   columns: 2,
   column-gutter: 1em,
   [#figure(
-      image("assets/grid_ortho.svg", width: 90%),
+      image("assets/grid_ortho.png", width: 90%),
       caption: "Orthogonales Gitter",
     )<fig:grid_ortho>],
   [#figure(
-      image("assets/grid_random.svg", width: 90%),
+      image("assets/grid_random.png", width: 90%),
       caption: "Eingeschränktes Zufallsgitter",
     )<fig:grid_random>],
 )
@@ -102,11 +102,11 @@ Unten sind detaillierte Zooms an derselben Position auf der Karte für die zwei 
   columns: 2,
   column-gutter: 1em,
   [#figure(
-      image("assets/grid_ortho_zoom.svg", width: 70%),
+      image("assets/grid_ortho_zoom.png", width: 70%),
       caption: "Orthogonales Gitter",
     )<fig:grid_ortho_zoom>],
   [#figure(
-      image("assets/grid_random_zoom.svg", width: 70%),
+      image("assets/grid_random_zoom.png", width: 70%),
       caption: "Eingeschränktes Zufallsgitter",
     )<fig:grid_random_zoom>],
 )
@@ -192,7 +192,7 @@ Diese Ähnlichkeitsbestimmung erfolgt mithilfe einer geeigneten Distanzfunktion.
 Der Grid-Knoten, dessen Merkmalsvektor die geringste Distanz (oder höchste Ähnlichkeit) zum aktuellen Merkmalsvektor des Roboters aufweist, wird als die wahrscheinlichste Position des Roboters angenommen. Die Position des Roboters wird somit auf den Ort dieses am besten passenden Grid-Knotens im Kartengrid geschätzt.
 
 #figure(
-  image("assets/features.svg", width: 90%),
+  image("assets/features.png", width: 90%),
   caption: "Karte mit Isovisten Merkmalen",
 )<fig:isovists_features>
 

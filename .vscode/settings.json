@@ -5,4 +5,6 @@
   "tinymist.formatterMode": "typstyle",
   "tinymist.preview.invertColors": "auto",
   "tinymist.exportPdf": "onSave",
+  "cSpell.enabled": false,
+  "cSpell.language": "en,de"
 }

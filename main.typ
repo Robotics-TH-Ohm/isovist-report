@@ -192,7 +192,7 @@ Diese Ähnlichkeitsbestimmung erfolgt mithilfe einer geeigneten Distanzfunktion.
 Der Grid-Knoten, dessen Merkmalsvektor die geringste Distanz (oder höchste Ähnlichkeit) zum aktuellen Merkmalsvektor des Roboters aufweist, wird als die wahrscheinlichste Position des Roboters angenommen. Die Position des Roboters wird somit auf den Ort dieses am besten passenden Grid-Knotens im Kartengrid geschätzt.
 
 #figure(
-  image("assets/features.png", width: 90%),
+  image("assets/features.png", width: 100%),
   caption: "Karte mit Isovisten Merkmalen",
 )<fig:isovists_features>
 
@@ -202,7 +202,7 @@ JAVA Carbot Simulator
 
 = Ergebnisse
 
-Good, to solve symmetry problem, we must use sequence of radial lenghts as features, which is slow.
+TODO: Testen
 
 = Diskussion
 

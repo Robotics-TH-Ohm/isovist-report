@@ -298,7 +298,7 @@ Zur Extraktion der Merkmale eines Isovisten werden ausgehend von der aktuellen P
 Der Roboter sucht dazu radial im Abstand von 0.9° (angelehnt an die Genauigkeit des Lidar-Sensors) jeweils nach dem am nähesten liegenden Hindernispunkt.
 Wird keiner gefunden, so wird davon ausgegangen, dass der Roboter nicht weit genug "sehen" konnte, um auf einen Hindernispunkt zu treffen.
 Um trotzdem einen nutzbaren Isovisten zu erhalten, wird ein Hindernis am Rande des Sichtfelds angenommen und ein Punkt künstlich erzeugt.
-Aus dieser Menge an Punkten kann anschließend die Merksmalsberechnung wie in @sec:merkmale beschrieben durchgeführt werden.
+Aus dieser Menge an Punkten kann anschließend die Merkmalsberechnung wie in @sec:merkmale beschrieben durchgeführt werden.
 
 Die Ermittlung der Isovisten-Eckpunkte aus Lidar-Scans erfolgt analog.
 Dabei ist zu beachten, dass der rohe Lidar-Scan keinerlei Informationen zu den Koordinaten der gemessenen Punkte enthält.
@@ -308,7 +308,7 @@ $
   x_i &= sin(theta) * "Distanz" \
   y_i &= cos(theta) * "Distanz"
 $
-Die so ermittelten Punkte lassen sich anschließend für die Merksmalsberechnung nutzen, wobei bei allen invaliden Messungen angenommen wird, dass das Hindernis direkt nach Ende der Sichtweite existiert.
+Die so ermittelten Punkte lassen sich anschließend für die Merkmalsberechnung nutzen, wobei bei allen invaliden Messungen angenommen wird, dass das Hindernis direkt nach Ende der Sichtweite existiert.
 Ein simulierter Lidar-Scan ist in @fig:lidar-scan zu sehen.
 Der daraus berechnete Isovist kann @fig:lidar-isovist entnommen werden.
 
@@ -325,15 +325,84 @@ Der daraus berechnete Isovist kann @fig:lidar-isovist entnommen werden.
     )<fig:lidar-isovist>],
 )
 
-= Ergebnisse
+= Ergebnisse und Diskussion
 
 Zur Validierung der vorgestellten Lösungsstrategie des KRP wird eine Evaluation durchgeführt.
 Dabei wird überprüft, ob es nach Veränderung der Position des Roboters ohne dessen Wissen darüber möglich ist, die Position anhand der berechneten Isovisten-Merkmale zu ermitteln.
+Wird der in @fig:lidar-isovist gezeigte Isovist mit dessen Merkmalsvektor zur Lokalisation verwendet, so ergibt dies die in @fig:isovist-full gezeigte Positionsschätzung.
+Betrachtet man diese genauer, so ergibt sich ein minimaler Fehler, da die Position des Lidar-Sensors nicht exakt mit der des ähnlichsten Isovisten übereinstimmt.
+Eine solche Diskrepanz ist jedoch nicht vermeidbar, da die Roboterposition nie exakt die diskret bestimmten Punkte des Grids treffen kann.
+Der beschriebene Fehler kann @fig:isovist-closeup entnommen werden.
+Die geschätzte Position ist als blaues Kreuz dargestellt, während die Abweichung zum Lidar-Sensor des Roboters als rote Linie gezeigt ist.
 
-= Diskussion
+#grid(
+  columns: 2,
+  column-gutter: 1em,
+  [#figure(
+      image("assets/isovist-full.png", width: 90%),
+      caption: [Lokalisation anhand eines Isovisten],
+    )<fig:isovist-full>],
+  [#figure(
+      image("assets/isovist-closeup.png", width: 90%),
+      caption: [Fehler der Lokalisation],
+    )<fig:isovist-closeup>],
+)
+
+Zur qantitativen Analyse der Genauigkeit der Lokalisierungsstrategie wird der Roboter an zehn zufälligen Positionen abgesetzt und anschließend die Position ermittelt.
+Für jede Messung wird der Abstand zur tatsächlichen Position $epsilon$ gemessen, um einen mittleren Wert für den durch die Lokalisation erzeugten Fehler $overline(epsilon)$ zu erhalten.
+Dieser gilt als Perfomance-Indikator für die Qualität der Lokalisierung, wobei ein geringer Wert besser ist, das Optimum von $epsilon = 0$ praktisch jedoch nie erreicht werden kann.
+
+In Experiment 1 sind dabei nur die Merkmale _Fläche_, _Umfang_, _Kompaktheit_ und _Drift_ enthalten.
+Experiment 2 erweitert diese Menge um radialen Längen.
+In Experiment 3 werden ebenfalls die radialen Momente betrachtet.
+Die Ergebnisse können @tab:fehler entnommen werden.
+Dabei konnte der geringste Fehler bei Verwendung aller Isovisten-Merkmale erzielt werden.
+
+// TODO: Mehr samples generieren -- ggf. direkt in Carbot-Umgebung
+#let samples = (
+  (44.72, 14.14, 14.14),
+  (12.37, 12.37, 78.06),
+  (11.18, 11.18, 11.18),
+  (5.01, 5.01, 5.01),
+  (291.22, 352.06, 352.06),
+  (6.08, 6.08, 6.08),
+  (43.08, 413.81, 136.37),
+  (440.12, 5.39, 5.39),
+  (21.19, 21.19, 12.21),
+  (79.16, 79.16, 12.08),
+)
+#let meanAt(i) = calc.round(samples.map(sample => sample.at(i)).sum() / samples.len(), digits: 2)
+#figure(
+  placement: auto,
+  table(
+    columns: (auto, auto, auto, auto),
+    table.header([*Sample \#*], [*Experiment 1 ($epsilon$)*], [*Experiment 2 ($epsilon$)*], [*Experiment 3 ($epsilon$)*]),
+    ..samples.enumerate().map(x => ([#(x.at(0)+1)], ..x.at(1).map(v => [#calc.round(v, digits: 2)]))).flatten(),
+    [*$overline(epsilon)$*], [*#meanAt(0)*], [*#meanAt(1)*], [*#meanAt(2)*],
+  ),
+  caption: [Distanzen zwischen tatsächlicher und geschätzter Position],
+) <tab:fehler>
+
+Hervorzuheben ist der bei Sample 5 auftretende hohe Fehlerwert.
+Dieser ist vorrangig auf die hoch symmetrische Umgebung zurückzuführen.
+Haben zwei Isovisten die gleiche Form, sind jedoch gespiegelt, so ist dies in keinem der verwendeten Merkmale repräsentiert.
+Zur Behebung dessen kann die in @sec:merkmale beschriebene radiale Sequenz verwendet werden.
+Dies führt jedoch zu einer erheblichen Erhöhung des Rechenaufwands, da jeder Merkmalsvektor die Längen aller Radiale enthalten muss.
+Durch die Auflösung des verwendeten Lidar-Sensors ergeben sich somit 400 weitere Merkmalsdimensionen, die bei Positionsschätzung verglichen werden müssen.
+Die Verwendung dieses Merkmals ist demnach nur dann einzusetzen, wenn die Arbeitsumgebung, in welcher der Roboter eingesetzt wird, dies erfordert.
 
 = Fazit und Ausblick
 
-#pagebreak(weak: true)
+Die vorliegende Arbeit hat erfolgreich gezeigt, dass durch die Verwendung von Isovisten und daraus berechneten Merkmalen eine effektive Lokalisierung in Indoor-Umgebungen möglich ist.
+Dies erlaubt es, dem vorgestellten Kidnapped Robot Problem zu begegnen und nur mithilfe eines Lidar-Scans die Position des Roboters auf einer vorher angelegten Karte zu bestimmen.
+
+Es konnte gezeigt werden, dass die ausgewählten Merkmale jeweils eine stetige Verbesserung der Genauigkeit der Positionsbestimmung erzielen, sodass im besten Fall alle Merkmale zur Bestimmung eines Isovisten herangezogen werden sollten.
+Ist dies z. B. aufgrund eingeschränkter Rechenkapazitäten nicht möglich, so kann jedoch auch mit einem kleinen Set an Merkmalen eine Abschätzung der Position erreicht werden.
+Zur Verbesserung dieser könnten mehrere Messungen an verschiedenen Positionen nacheinander durchgeführt werden, um eine genauere Schätzung zu erhalten.
+Die Abwägung zwischen Rechen- und Zeitaufwand zur Erreichung einer ausreichenden Genauigkeit ist jedoch individuell für den jeweiligen Anwendungsfall zu treffen.
+
+Die in dieser Arbeit betrachtete Umgebung bestand nur aus statischen Hindernisobjekten, welche sich sowohl während des Kartografierens als auch bei späterer Positionsbestimmung nicht verändert haben.
+Eine Fortführung des gezeigten Ansatzes ist hinsichtlich der Robustheit gegenüber dynamischen Objekten in der Arbeitsumgebung zu untersuchen und ggf. anzupassen.
+
+\ \ \
 #bibliography("/refs.bib", style: "ieee", title: "Literaturverzeichnis")
-#pagebreak(weak: true)

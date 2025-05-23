@@ -349,7 +349,7 @@ Die geschätzte Position ist als blaues Kreuz dargestellt, während die Abweichu
     )<fig:isovist-closeup>],
 )
 
-Zur qantitativen Analyse der Genauigkeit der Lokalisierungsstrategie wird der Roboter an zehn zufälligen Positionen abgesetzt und anschließend die Position ermittelt.
+Zur quantitativen Analyse der Genauigkeit der Lokalisierungsstrategie wird der Roboter an zehn zufälligen Positionen abgesetzt und anschließend die Position ermittelt.
 Für jede Messung wird der Abstand zur tatsächlichen Position $epsilon$ gemessen, um einen mittleren Wert für den durch die Lokalisation erzeugten Fehler $overline(epsilon)$ zu erhalten.
 Dieser gilt als Perfomance-Indikator für die Qualität der Lokalisierung, wobei ein geringer Wert besser ist, das Optimum von $epsilon = 0$ praktisch jedoch nie erreicht werden kann.
 

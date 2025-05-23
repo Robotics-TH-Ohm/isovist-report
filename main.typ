@@ -8,6 +8,7 @@
 #set document(
   title: title.replace("\n", " "),
   author: authors.map(author => author.name).join(", "),
+  description: "DRAFT - Version 2025-05-22",
 )
 
 #set text(font: "New Computer Modern", lang: "de", size: 12pt)
@@ -15,7 +16,7 @@
 #set page(
   paper: "a4",
   margin: (right: 2.5cm, left: 2.5cm, top: 2.5cm, bottom: 2cm),
-  header: context if counter(page).get().at(0) > 1 { text(size: 10pt, title.replace("\n", " ")) },
+  header: context if counter(page).get().at(0) > 1 { text(size: 10pt, title.replace("\n", " ")) } else { text(font: "DejaVu Sans Mono", weight: "bold", fill: rgb("#c72426"))[DRAFT --- Version 2025-05-22]},
   footer: text(size: 10pt, context counter(page).display()),
 )
 

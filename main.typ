@@ -16,7 +16,9 @@
 #set page(
   paper: "a4",
   margin: (right: 2.5cm, left: 2.5cm, top: 2.5cm, bottom: 2cm),
-  header: context if counter(page).get().at(0) > 1 { text(size: 10pt, title.replace("\n", " ")) } else { text(font: "DejaVu Sans Mono", weight: "bold", fill: rgb("#c72426"))[DRAFT --- Version 2025-05-22]},
+  header: context if counter(page).get().at(0) > 1 { text(size: 10pt, title.replace("\n", " ")) } else {
+    text(font: "DejaVu Sans Mono", weight: "bold", fill: rgb("#c72426"))[DRAFT --- Version 2025-05-22]
+  },
   footer: text(size: 10pt, context counter(page).display()),
 )
 
@@ -41,7 +43,7 @@
 
   ..authors.map(author => [
     *#author.name*\
-    #link("mailto:"+author.email)
+    #link("mailto:" + author.email)
   ])
 )
 
@@ -163,10 +165,10 @@ $ r_i = sqrt((x_i - v_x)^2 + (y_i - v_y)^2) $
 Die radialen Längenmerkmale $R$, abgeleitet von der oben definierten Distanz $r_i$, sind wie folgt definiert:
 
 $
-R_("min") &= min(r_1, r_2, ..., r_N) \
-R_("avg") &= 1 / N sum^N_(i=1) r_i \
-R_("max") &= max(r_1, r_2, ..., r_N) \
-R_("seq") &= [r_1, r_2, ..., r_N]
+  R_("min") &= min(r_1, r_2, ..., r_N) \
+  R_("avg") &= 1 / N sum^N_(i=1) r_i \
+  R_("max") &= max(r_1, r_2, ..., r_N) \
+  R_("seq") &= [r_1, r_2, ..., r_N]
 $
 
 #v(0.5em)
@@ -174,27 +176,25 @@ $
 *Radiale Momente (Mittelwert, Varianz, Schiefe):* Die radialen Momente quantifizieren Eigenschaften der sichtbaren Fläche basierend auf der Verteilung des radialen Abstands vom Standpunkt zur Isovist-Begrenzung. Für einen polygonalen Isovisten werden die rohen radialen Momente $M_1, M_2, M_3$ wie folgt berechnet:
 
 $
-M_("avg") &= a_1 \
-M_("var") &= a_2 - M_("avg")^2 \
-M_("skew") &= a_3 - 3 M_("avg") a_2 + 2 M_("avg")^3
+  M_("avg") &= a_1 \
+  M_("var") &= a_2 - M_("avg")^2 \
+  M_("skew") &= a_3 - 3 M_("avg") a_2 + 2 M_("avg")^3
 $
 
 wobei die Terme $a_1, a_2, a_3$ sich auf die Summe über alle Begrenzungssegmente $i$ des Isovist-Polygons beziehen und wie folgt definiert sind:
 
 $
-a_1 = sum^N_(i=1) a_1(i) #h(4em)
-a_2 = sum^N_(i=1) a_2(i) #h(4em)
-a_3 = sum^N_(i=1) a_3(i)
+  a_1 = sum^N_(i=1) a_1(i) #h(4em)
+  a_2 = sum^N_(i=1) a_2(i) #h(4em)
+  a_3 = sum^N_(i=1) a_3(i)
 $
 
 Die einzelnen Terme $a_1(i), a_2(i), a_3(i)$ für das $i$-te Begrenzungssegment werden berechnet als:
 
 $
-a_1(i) &= (a_i b_i) / c_i (sin gamma_i) / gamma_i log abs(((c_i+a_i - b cos gamma_i)(c_i + b_i - a_i cos gamma_i)) / (a_i b_i sin^2 gamma_i)) \
-
-a_2(i) &= 1 / gamma_i ((a_i b_i) / c_i sin gamma_i)^2 ( cot alpha_i + cot beta_i) \
-
-a_3(i) &= 1 / 2 gamma_i ((a_i b_i ) / c_i sin gamma_i)^3 [csc alpha_i cot alpha_i + csc beta_i cot beta_i + \ &#h(9em) log abs((csc alpha_i + cot alpha_i)(csc beta_i + cot beta_i)) ]
+  a_1(i) &= (a_i b_i) / c_i (sin gamma_i) / gamma_i log abs(((c_i+a_i - b cos gamma_i)(c_i + b_i - a_i cos gamma_i)) / (a_i b_i sin^2 gamma_i)) \
+  a_2(i) &= 1 / gamma_i ((a_i b_i) / c_i sin gamma_i)^2 ( cot alpha_i + cot beta_i) \
+  a_3(i) &= 1 / 2 gamma_i ((a_i b_i ) / c_i sin gamma_i)^3 [csc alpha_i cot alpha_i + csc beta_i cot beta_i + \ &#h(9em) log abs((csc alpha_i + cot alpha_i)(csc beta_i + cot beta_i)) ]
 $
 
 Die geometrischen Parameter für Seitenlängen ($a_i, b_i, c_i$) und Winkel ($alpha_i, beta_i, gamma_i$) beziehen sich auf das Dreieck, das durch den Standpunkt und das $i$-te Begrenzungssegment gebildet wird.
@@ -209,7 +209,7 @@ Die Effizienz und Robustheit dieses Relokalisierungsprozesses hängen von der Di
 
 Diese Ähnlichkeitsbestimmung erfolgt mithilfe einer geeigneten Distanzfunktion. Durch die Berechnung der Distanz zwischen den Merkmalsvektoren kann quantifiziert werden, wie ähnlich die aktuelle Sicht des Roboters der simulierten Sicht an jedem einzelnen Grid-Knoten ist. Für diesen Zweck können verschiedene Distanzfunktionen eingesetzt werden, darunter die euklidische Distanz, die Kosinus-Ähnlichkeit und die Manhattan-Distanz. Die Wahl der Distanzfunktion kann die Interpretation von Ähnlichkeit im Merkmalsraum beeinflussen und sollte auf die Eigenschaften der verwendeten Isovist-Merkmale abgestimmt sein.
 
-Der Grid-Knoten, dessen Merkmalsvektor die geringste Distanz (oder höchste Ähnlichkeit) zum aktuellen Merkmalsvektor des Roboters aufweist, wird als die wahrscheinlichste Position des Roboters angenommen. Der  Die Position des Roboters wird somit auf den Ort dieses am besten passenden Grid-Knotens im Kartengrid geschätzt.
+Der Grid-Knoten, dessen Merkmalsvektor die geringste Distanz (oder höchste Ähnlichkeit) zum aktuellen Merkmalsvektor des Roboters aufweist, wird als die wahrscheinlichste Position des Roboters angenommen. Der Die Position des Roboters wird somit auf den Ort dieses am besten passenden Grid-Knotens im Kartengrid geschätzt.
 
 #figure(
   image("assets/features.png", width: 100%),
@@ -266,15 +266,18 @@ Für diese Menge gilt es, Isovisten-Merkmale zu berechnen.
               {
                 Comment[Zelle ist kein Hindernis und wurde noch nicht betrachtet]
                 LineComment(Assign[$R$][$R union c$], [Markiere Zelle als erreichbar])
-                LineComment(Assign[$Q$][$Q union {"c.north()", "c.east()", "c.south()", "c.west()"}$], [Betrachte alle Nachbarn])
-              }
+                LineComment(
+                  Assign[$Q$][$Q union {"c.north()", "c.east()", "c.south()", "c.west()"}$],
+                  [Betrachte alle Nachbarn],
+                )
+              },
             )
           },
         )
         Return[$R$]
       },
     )
-  }
+  },
 ) <alg:reachable>
 
 @fig:environment zeigt die in der Simulation verwendete Umgebung, welche nach Eintragen der Hindernispunkte als Grid approximiert ist (@fig:grid).
@@ -377,8 +380,13 @@ Dabei konnte der geringste Fehler bei Verwendung aller Isovisten-Merkmale erziel
   placement: auto,
   table(
     columns: (auto, auto, auto, auto),
-    table.header([*Sample \#*], [*Experiment 1 ($epsilon$)*], [*Experiment 2 ($epsilon$)*], [*Experiment 3 ($epsilon$)*]),
-    ..samples.enumerate().map(x => ([#(x.at(0)+1)], ..x.at(1).map(v => [#calc.round(v, digits: 2)]))).flatten(),
+    table.header(
+      [*Sample \#*],
+      [*Experiment 1 ($epsilon$)*],
+      [*Experiment 2 ($epsilon$)*],
+      [*Experiment 3 ($epsilon$)*],
+    ),
+    ..samples.enumerate().map(x => ([#(x.at(0) + 1)], ..x.at(1).map(v => [#calc.round(v, digits: 2)]))).flatten(),
     [*$overline(epsilon)$*], [*#meanAt(0)*], [*#meanAt(1)*], [*#meanAt(2)*],
   ),
   caption: [Distanzen zwischen tatsächlicher und geschätzter Position],

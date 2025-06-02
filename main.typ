@@ -57,99 +57,110 @@
 
 = Einleitung
 
-Die Fähigkeit mobiler Roboter zur autonomen Bewegung in ihrer Umgebung erfordert die exakte Kenntnis des eigenen Standorts. Diese Selbstlokalisierung ist die Grundlage für sinnvolle Interaktionen mit der Umgebung. Ein Roboter benötigt eine präzise Positionsbestimmung auf einer Karte, da die Erledigung von Aufgaben andernfalls erheblich erschwert oder unmöglich ist. Anwendungen wie autonome Reinigung, Güterzustellung oder Führungsaufgaben setzen eine kontinuierliche und genaue Selbstverortung voraus. Während die Lokalisierung im Außenbereich durch globale Navigationssatellitensysteme (GNSS) wie GPS weitgehend etabliert ist, bleibt sie in Innenräumen eine signifikante Herausforderung.
+Die autonome Fortbewegung mobiler Roboter erfordert präzise Standortinformationen. Diese Selbstlokalisierung ist die Basis für Interaktionen mit der Umgebung. Eine exakte Positionsbestimmung auf einer Karte ist notwendig; andernfalls sind Aufgaben nur schwer oder gar nicht durchführbar. Autonome Reinigungs-, Güterzustellungs- und Führungsaufgaben setzen eine kontinuierliche, genaue Selbstverortung voraus. Die Lokalisierung im Außenbereich ist mittels globaler Navigationssatellitensysteme (GNSS) wie GPS etabliert. In Innenräumen stellt sie weiterhin eine erhebliche Herausforderung dar.
 
-Mit der fortschreitenden Entwicklung von Lokalisierungsalgorithmen werden zunehmend komplexere Szenarien in der Forschung betrachtet. Ein Beispiel hierfür ist das sogenannte Kidnapped Robot Problem (KRP). Dieses Szenario beschreibt eine Situation, in der der Roboter an einen ihm unbekannten Ort innerhalb seiner Arbeitsumgebung gebracht wird oder seine aktuelle Position verliert. Die erfolgreiche Bewältigung des KRP gilt als Indikator für die Fähigkeit eines Roboters, sich nach einem Lokalisierungsfehler zu reorientieren und seine Aufgaben fortzusetzen. Dieses Problem zeigt die Anforderung an Lokalisierungsansätze, die auch in untypischen Situationen zuverlässig arbeiten.
+Die Entwicklung von Lokalisierungsalgorithmen führt zur Betrachtung komplexerer Szenarien in der Forschung. Das Kidnapped Robot Problem (KRP) ist ein Beispiel. Dieses Szenario beschreibt die Verbringung des Roboters an einen unbekannten Ort innerhalb seiner Arbeitsumgebung oder den Verlust seiner aktuellen Position. Die erfolgreiche Lösung des KRP indiziert die Fähigkeit eines Roboters zur Reorientierung und Fortsetzung seiner Aufgaben nach einem Lokalisierungsfehler. Das Problem unterstreicht die Notwendigkeit robuster Lokalisierungsansätze, die auch in untypischen Situationen zuverlässig funktionieren.
 
-In der vorliegenden Arbeit wird ein Ansatz zur Indoor-Lokalisierung untersucht, der auf die Bewältigung des Kidnapped Robot Problems ausgerichtet ist. Der Fokus liegt auf der Nutzung von Isovisten in Verbindung mit LiDAR-Sensorik. Isovisten beschreiben den von einem bestimmten Punkt aus sichtbaren Raum. Sie erfassen die Form und Struktur der unmittelbaren Umgebung, indem sie die direkt vom Beobachter einsehbaren Punkte definieren. Die Struktur des sichtbaren Raumes kann als charakteristisch für einen Standort betrachtet werden, was potenziell zur Wiedererkennung nach einer Positionsveränderung des Roboters genutzt werden kann. Ein LiDAR-Sensor ermöglicht die Erfassung der für die Isovisten-Analyse erforderlichen Umgebungsgeometrie.
+Diese Arbeit untersucht einen Ansatz zur Indoor-Lokalisierung, der auf die Lösung des Kidnapped Robot Problems abzielt. Der Schwerpunkt liegt auf der Anwendung von Isovisten in Kombination mit LiDAR-Sensorik. Isovisten definieren den von einem spezifischen Punkt aus sichtbaren Raum. Sie erfassen die Form und Struktur der direkten Umgebung, indem sie die für einen Beobachter einsehbaren Punkte bestimmen. Die Struktur des sichtbaren Raumes kann als standortcharakteristisch angesehen werden, was eine Wiedererkennung nach Roboterpositionsänderungen potenziell ermöglicht. Ein LiDAR-Sensor erfasst die für die Isovisten-Analyse notwendige Umgebungsgeometrie.
 
-Die zentrale Forschungsfrage dieser Arbeit ist, in welchem Maße ein Ansatz basierend auf der Analyse von LiDAR-basierten Isovisten zur Lösung des "Kidnapped Robot Problems" in einer Indoor-Umgebung beitragen kann.
+Die zentrale Forschungsfrage dieser Arbeit ist, inwiefern ein Ansatz auf Grundlage der Analyse von LiDAR-basierten Isovisten zur Lösung des Kidnapped Robot Problems in einer Innenraumumgebung beitragen kann. Die Experimente finden in einem Simulator statt, der Roboter, Umgebung und LiDAR-Sensoren umfasst. Zur Untersuchung des Kidnapped Robot Problems können die LiDAR-Sensoren an beliebigen Positionen platziert werden; die Umgebung ist statisch.
 
 = Grundlagen und Stand der Technik
 
-In diesem Kapitel wird das Kidnapped Robot Problem beschrieben sowie aktuelle Herangehensweisen an dieses erläutert, welche sich auf vorrangig auf die Fusion verschiedener Sensordaten fokussieren.
-Die genaue Betrachtung von Isovisten ermöglicht es, eine alternative Lösungsstrategie zu skizzieren, welche diese als primäre Quelle zur Lokalisierung nutzt.
+Dieses Kapitel beschreibt das Kidnapped Robot Problem und erläutert aktuelle Lösungsansätze, die hauptsächlich auf der Fusion unterschiedlicher Sensordaten basieren. Die detaillierte Analyse von Isovisten ermöglicht die Skizzierung einer alternativen Lösungsstrategie, welche diese als primäre Lokalisierungsquelle verwendet.
 
 == Das Kidnapped Robot Problem
 
-Das Kidnapped Robot Problem (KRP) in Innenräumen stellt eine spezielle Form des globalen Lokalisierungsproblems dar. Dabei muss der Roboter seine Position und Orientierung (Pose) ohne vorherige Kenntnis bestimmen. Dies ist eine wichtige Fähigkeit für autonome Roboter, besonders in Umgebungen ohne verlässliche GPS-Signale. Aktuelle Verfahren im Stand der Technik konzentrieren sich auf robuste und genaue Lokalisierungsmethoden, die solche drastischen Zustandsänderungen verarbeiten und eine schnelle Wiederherstellung der Lokalisierung ermöglichen können.
+Das Kidnapped Robot Problem (KRP) in Innenräumen ist eine spezifische Form des globalen Lokalisierungsproblems. Hierbei muss der Roboter seine Position und Orientierung (Pose) ohne Vorabkenntnis bestimmen @thrun_ProbabilisticRoboticsIntelligent_2005. Dies ist eine entscheidende Fähigkeit für autonome Roboter, besonders in Umgebungen ohne zuverlässige GPS-Signale. Aktuelle Verfahren konzentrieren sich auf robuste und präzise Lokalisierungsmethoden, die solche signifikanten Zustandsänderungen verarbeiten und eine schnelle Wiederherstellung der Lokalisierung ermöglichen.
 
-Im Rahmen des Stands der Technik zur Bewältigung des KRP ist die LiDAR-basierte Lokalisierung, unter Verwendung von Algorithmen wie Monte Carlo Localization (MCL), ein verbreiteter Ansatz. MCL nutzt einen Partikelfilter, um eine Wahrscheinlichkeitsverteilung über mögliche Posen zu führen und diese basierend auf der Übereinstimmung von Sensordaten mit einer vorhandenen Karte zu aktualisieren @thrun_ProbabilisticRoboticsIntelligent_2005. Obwohl effektiv, kann die Leistung von MCL in Umgebungen mit sich wiederholenden Strukturen oder wenigen Merkmalen nachlassen. Dies macht sie anfällig für das Kidnapped Robot Problem, wenn die anfängliche Posenschätzung weit von der tatsächlichen Position abweicht.
+Im Bereich des Stands der Technik zur KRP-Bewältigung ist die LiDAR-basierte Lokalisierung mittels Monte Carlo Localization (MCL) ein verbreiteter Ansatz. MCL verwendet einen Partikelfilter, um eine Wahrscheinlichkeitsverteilung über mögliche Posen zu pflegen und diese basierend auf der Übereinstimmung von Sensordaten mit einer Karte zu aktualisieren @thrun_ProbabilisticRoboticsIntelligent_2005. Ein Vorteil von MCL ist die direkte Verarbeitung von Rohsensormessungen, was nicht auf eine einzelne, präzise Position beschränkt ist. Es ist somit prinzipiell zur Lösung globaler Lokalisierungsprobleme und des Kidnapped Robot Problems geeignet @thrun_ProbabilisticRoboticsIntelligent_2005.
 
-Als Alternative oder Ergänzung bei der Adressierung des KRP bieten sich Computer-Vision-Techniken an. Visuelle Platzerkennung, bei der aktuelle Kamerabilder mit einer Datenbank bekannter Orte verglichen werden, kann eine globale Posenschätzung zur Unterstützung der Relokalisierung nach einem Entführungsereignis liefern @cummins_ProbabilisticAppearanceBased_2007a. Die Kombination von visuellen und probabilistischen Lokalisierungsmethoden kann die Robustheit erhöhen, insbesondere in visuell komplexen Umgebungen.
+Die Effektivität von MCL kann in Umgebungen mit repetitiven Strukturen oder wenigen eindeutigen Merkmalen eingeschränkt sein. Dies erhöht die Anfälligkeit von MCL für das Kidnapped Robot Problem, besonders bei signifikanten Abweichungen der anfänglichen Positionsschätzung oder einem vollständigen Lokalisierungsverlust. Zur Bewältigung des KRP mit MCL werden spezifische Techniken eingesetzt. Eine verbreitete Methode ist die Ergänzung des Partikelsatzes um zufällige Partikel. Diese Maßnahme erhöht die Robustheit des Algorithmus durch eine kontinuierliche Neuinitialisierung der Lokalisierung, als ob der Roboter mit geringer Wahrscheinlichkeit "entführt" worden wäre @thrun_ProbabilisticRoboticsIntelligent_2005. Ein weiterer Ansatz ist Mixture MCL, der eine robuste Lösung für das KRP bietet. Hierbei werden Partikel an Positionen platziert, die basierend auf der letzten Messung plausibel erscheinen, was eine verbesserte Robustheit in praktischen Anwendungen sicherstellt @thrun_ProbabilisticRoboticsIntelligent_2005.
 
-Eine weitere Strategie zur Bewältigung des KRP ist die Kombination probabilistischer Lokalisierungsverfahren mit drahtlosen Sensordaten (wie von IMUs, funkbasierten Systemen, Bluetooth oder WLAN) @obeidat_ReviewIndoorLocalization_2021. Dieser Ansatz erhöht die Genauigkeit und liefert zusätzliche Lokalisierungsinformationen, was ebenfalls zur Robustheit bei plötzlichen Positionsänderungen beitragen kann.
+Computer-Vision-Techniken stellen eine Alternative oder Ergänzung zur KRP-Bewältigung dar. Die visuelle Platzerkennung, bei der aktuelle Kamerabilder mit einer Datenbank bekannter Orte abgeglichen werden, kann eine globale Positionsschätzung ermöglichen und die erneute Lokalisierung nach einem "Entführungsereignis" unterstützen @cummins_ProbabilisticAppearanceBased_2007a. Die Kombination visueller und probabilistischer Lokalisierungsmethoden kann die Robustheit, insbesondere in visuell komplexen Umgebungen, steigern.
 
-Die Bewältigung des Kidnapped Robot Problems stellt somit eine zentrale Anforderung an robuste Indoor-Lokalisierungssysteme dar. Aktuelle Forschung konzentriert sich dabei auf die Weiterentwicklung und Kombination verschiedener sensorischer Ansätze zur Verbesserung der Leistungsfähigkeit in solchen Szenarien.
+Eine zusätzliche Strategie zur KRP-Bewältigung ist die Integration probabilistischer Lokalisierungsverfahren mit drahtlosen Sensordaten, beispielsweise von IMUs, funkbasierten Systemen, Bluetooth oder WLAN @obeidat_ReviewIndoorLocalization_2021. Dieser Ansatz kann die Genauigkeit erhöhen und ergänzende Lokalisierungsinformationen bereitstellen, was zur Robustheit bei abrupten Positionsänderungen beitragen kann.
+
+Die Lösung des Kidnapped Robot Problems ist eine Kernanforderung an robuste Indoor-Lokalisierungssysteme. Die aktuelle Forschung konzentriert sich auf die Weiterentwicklung und Kombination diverser sensorischer Ansätze, um die Leistung in diesen Szenarien zu steigern.
 
 == Isovisten
 
-Isovisten werden formal definiert als "the set of all points visible from a given vantage point in space and with respect to the environment" @benedikt_takeholdspace_1979. Sie können auf verschiedene Weisen dargestellt werden, darunter Sichtbarkeitsgraphen oder Polyeder für 3D-Repräsentationen und Polygone im zweidimensionalen Bereich. Diese Darstellungen dienen als ein eindeutiger räumlicher "Fingerabdruck" für einen gegebenen Standort.
+#figure(
+  image("assets/isovist.png", width: 80%),
+  caption: "Visueller Bereich (Isovisten) von einem Standpunkt aus in einer Umgebung.",
+) <fig:isovist>
 
-Die Forschung untersucht die Nutzung von Isovisten-Merkmalen für die Indoor-Lokalisierung. Dies beinhaltet die Entwicklung von Verfahren zur Generierung von 2D- und 3D-Isovisten aus Punktwolken, die von Sensoren wie LiDAR erfasst werden. Darüber hinaus wird untersucht, wie Isovistenmaße die räumliche Struktur von Gebäuden erfassen und wie diese Merkmale zur Platzerkennung eingesetzt werden können, oft unter Nutzung von Methoden des maschinellen Lernens @sedlmeier_Learningindoorspace_2018.
+Isovisten werden formal als "the set of all points visible from a given vantage point in space and with respect to the environment" definiert @benedikt_takeholdspace_1979. Wie in @fig:isovist dargestellt, bildet sich von einem Standpunkt aus die sichtbare Fläche. Nicht sichtbare Bereiche sind durch Wände begrenzt. Isovisten können unterschiedlich dargestellt werden, z.B. als Sichtbarkeitsgraphen oder Polyeder für 3D-Repräsentationen und Polygone im zweidimensionalen Bereich. Diese Darstellungen dienen als eindeutiger räumlicher "Fingerabdruck" für einen bestimmten Standort.
 
-Allerdings teilen Isovisten Herausforderungen mit anderen Lokalisierungsverfahren. Dazu gehören die Empfindlichkeit gegenüber dynamischen Umweltveränderungen (wie der Anwesenheit von Personen oder beweglichen Objekte), das Risiko von Mehrdeutigkeiten in Umgebungen mit sich wiederholenden architektonischen Merkmalen sowie der rechnerische Aufwand @thrun_ProbabilisticRoboticsIntelligent_2005. Isovisten sind von diesen Schwierigkeiten betroffen.
+Die Forschung untersucht die Nutzung von Isovisten-Merkmalen für die Indoor-Lokalisierung. Dies umfasst die Entwicklung von Verfahren zur Generierung von 2D- und 3D-Isovisten aus Punktwolken, die von LiDAR-Sensoren erfasst werden. Des Weiteren wird analysiert, wie Isovistenmaße die räumliche Struktur von Gebäuden erfassen und wie diese Merkmale, oft unter Einsatz maschineller Lernmethoden, zur Platzerkennung genutzt werden können @sedlmeier_Learningindoorspace_2018.
 
-Infolgedessen werden Isovisten aufgrund dieser Einschränkungen und ihres aktuellen Entwicklungsstands eher als komplementäre Informationen in breitere Lokalisierungs- oder Platzerkennungsframeworks integriert, anstatt als alleiniger oder primärer Lokalisierungsmechanismus zur Bewältigung von Entführungsereignissen zu dienen.
+Isovisten teilen jedoch Herausforderungen mit anderen Lokalisierungsverfahren. Dazu zählen die Sensibilität gegenüber dynamischen Umweltveränderungen (z.B. Anwesenheit von Personen oder beweglichen Objekten), das Risiko von Mehrdeutigkeiten in Umgebungen mit repetitiven architektonischen Merkmalen sowie der rechnerische Aufwand @thrun_ProbabilisticRoboticsIntelligent_2005. Isovisten sind von diesen Schwierigkeiten ebenfalls betroffen.
 
-= Methodik
+Aufgrund dieser Einschränkungen und ihres aktuellen Entwicklungsstands werden Isovisten eher als komplementäre Informationen in umfassendere Lokalisierungs- oder Platzerkennungsframeworks integriert, anstatt als primärer oder alleiniger Lokalisierungsmechanismus zur Bewältigung von Entführungsereignissen zu fungieren.
 
-In diesem Kapitel wird die entwickelte Methodik zur Indoor-Lokalisierung unter Verwendung von Lidar-basierten Isovist-Merkmalen beschrieben. Ein spezifischer Fokus liegt dabei auf der Bewältigung des Kidnapped Robot Problems. Die Experimente werden in einem Simulator durchgeführt, welcher den Roboter, die Umgebung und den Lidar-Sensor umfasst.
+= Methodik zur Lösung des Kidnapped Robot Problems mittels Isovisten
+
+Dieses Kapitel beschreibt die entwickelte Methodik zur Lösung des Kidnapped Robot Problems mittels LiDAR-basierter Isovisten-Merkmale für die Indoor-Lokalisierung. Die Experimente erfolgen in einem Simulator, der den Roboter, die Umgebung und die LiDAR-Sensoren einschließt. Zur Untersuchung des Kidnapped Robot Problems können die LiDAR-Sensoren an beliebigen Positionen platziert werden; die Umgebung ist statisch.
 
 == Kartengrid
 
-Die Grundlage des Lokalisierungsansatzes bildet ein Grid, das über der Umgebungskarte generiert wird und diskrete Lokalisierungspunkte innerhalb der Arbeitsumgebung des Roboters repräsentiert. Für diese Arbeit wird die Karte des Sonsbeek Pavilions von Aldo van Eyck aus dem Jahr 1966 verwendet @fabrizi_SonsbeekPavilionArnhem_2013, insbesondere wegen ihrer symmetrischen Struktur. Die Symmetrie dieser Karte wurde gewählt, um die Komplexität bei der Lösung des Kidnapped Robot Problems zu erhöhen. Für diesen Ansatz stehen zwei Hauptvarianten von Grids zur Verfügung.
-
-Die erste Variante ist ein orthogonaler Raster-Grid (auch bekannt als kartesisches Grid), das traditionell für isovist-basierte Analysen verwendet wird. Bei dieser Gridstruktur sind zwei Sätze von Linien senkrecht zueinander angeordnet (@fig:grid_ortho). Obwohl dies eine gleichmäßige Abdeckung ermöglicht, sind die Nachteile des orthogonalen Grids in Bezug auf die Ausrichtung relativ zur Gebäudestruktur, die Approximation gekrümmter Flächen und die Behandlung schmaler Öffnungen bekannt @conroy_dalton_isovist_2022. Bei der Verwendung des orthogonalen Grids kann der Abstand zwischen den Grid-Linien kontrolliert werden, was die Dichte der Lokalisierungspunkte beeinflusst.
-
-Als zweite Variante kann eine eingeschränkte zufällige Verteilung der Grid-Knoten eingesetzt werden, angelehnt an Konzepte wie die Restricted Randomised Visibility Graph Analysis (R-VGA). Diese Methode, die darauf abzielt, eine robustere und weniger von der spezifischen Grid-Platzierung abhängige Analyse zu ermöglichen @conroy_dalton_isovist_2022, platziert die Lokalisierungspunkte nicht in einem starren Gittermuster, sondern nach einem Verfahren, das eine gleichmäßigere Verteilung gewährleistet (@fig:grid_random). Bei der eingeschränkten zufälligen Verteilung kann die Gesamtzahl der Grid-Knoten festgelegt werden, was ebenfalls die Dichte der Lokalisierungspunkte steuert.
+Die Basis des Lokalisierungsansatzes bildet ein Grid, das über der Umgebungskarte generiert wird. Es repräsentiert diskrete Lokalisierungspunkte innerhalb der Arbeitsumgebung des Roboters. Für diese Arbeit wird die Karte des Sonsbeek Pavilions von Aldo van Eyck aus dem Jahr 1966 verwendet @fabrizi_SonsbeekPavilionArnhem_2013. Diese Karte ist durch ihre symmetrische Struktur und verschiedene kreisförmige Linien charakterisiert. Die Symmetrie und die komplexen geometrischen Formen wurden gewählt, um die Komplexität bei der Lösung des Kidnapped Robot Problems zu steigern. Für diesen Ansatz sind zwei Hauptvarianten von Grids verfügbar.
 
 #grid(
   columns: 2,
   column-gutter: 1em,
   [#figure(
       image("assets/grid_ortho.png", width: 90%),
-      caption: "Orthogonales Gitter",
+      caption: "Orthogonales Grid",
     )<fig:grid_ortho>],
   [#figure(
       image("assets/grid_random.png", width: 90%),
-      caption: "Eingeschränktes Zufallsgitter",
+      caption: "Eingeschränktes Zufalls-Grid",
     )<fig:grid_random>],
 )
 
-Durch die immer in gleichen Abständen platzierten Punkte eines ortogonalen Gitters ist es möglich, dass diese häufig zu nahe bzw. innerhalb von Hindernissen generiert werden (@fig:grid_ortho_zoom). Sie sind somit nicht zur Berechnung eines Isovisten verwendbar. Im eingeschränkten zufälligen Gitter kann dies vermieden werden, da die Gitterpunkte nicht an ein fest definiertes Raster gebunden sind (@fig:grid_random_zoom).
+Die erste Variante ist ein orthogonales Grid (auch kartesisches Grid genannt), das traditionell für Isovisten-Analysen genutzt wird. Bei dieser Gridstruktur sind zwei Liniensätze senkrecht zueinander angeordnet (@fig:grid_ortho). Dies ermöglicht zwar eine gleichmäßige Abdeckung, doch sind die Nachteile des orthogonalen Grids hinsichtlich Ausrichtung zur Gebäudestruktur, Approximation gekrümmter Flächen und Behandlung schmaler Öffnungen bekannt @conroy_dalton_isovist_2022. Der Abstand zwischen den Grid-Linien ist kontrollierbar, was die Dichte der Lokalisierungspunkte beeinflusst.
+
+Als zweite Variante kann eine eingeschränkte zufällige Verteilung der Grid-Knoten verwendet werden, angelehnt an Konzepte wie die Restricted Randomised Visibility Graph Analysis (R-VGA). Diese Methode zielt auf eine robustere, weniger von der spezifischen Grid-Platzierung abhängige Analyse ab @conroy_dalton_isovist_2022. Die Lokalisierungspunkte werden hierbei nicht in einem starren Gridmuster, sondern nach einem Verfahren platziert, das eine gleichmäßigere Verteilung gewährleistet (@fig:grid_random). Bei der eingeschränkten zufälligen Verteilung kann die Gesamtzahl der Grid-Knoten festgelegt werden, wodurch die Dichte der Lokalisierungspunkte gesteuert wird.
 
 #grid(
   columns: 2,
   column-gutter: 1em,
   [#figure(
       image("assets/grid_ortho_zoom.png", width: 70%),
-      caption: "Orthogonales Gitter",
+      caption: "Orthogonales Grid: Punkte können sich in Hindernissen oder zu nah an diesen befinden.",
     )<fig:grid_ortho_zoom>],
   [#figure(
       image("assets/grid_random_zoom.png", width: 70%),
-      caption: "Eingeschränktes Zufallsgitter",
+      caption: "Eingeschränktes Zufalls-Grid: Die Pfeile kennzeichnen Punkte, die im orthogonalen Grid nicht generiert würden.",
     )<fig:grid_random_zoom>],
 )
 
-Die Wahl der Gridstruktur und die Einstellung ihrer spezifischen Parameter können somit variiert werden, um eine angemessene Abdeckung der Umgebung zu gewährleisten, die rechnerische Last zu steuern und die Robustheit der Lokalisierung zu optimieren.
+Durch die stets gleichmäßigen Abstände im orthogonalen Grid besteht die Möglichkeit, dass Punkte häufig zu nah an oder innerhalb von Hindernissen generiert werden (@fig:grid_ortho_zoom). Solche Punkte sind für die Isovistenberechnung unbrauchbar. Im eingeschränkten zufälligen Grid kann dies vermieden werden, da die Gridpunkte nicht an ein festes Raster gebunden sind. Wie in @fig:grid_random_zoom dargestellt, sind zwei Punkte, die im orthogonalen Grid nicht generiert, aber im eingeschränkten zufälligen Grid verfügbar sind, beispielhaft illustriert.
+
+Die Wahl der Gridstruktur und die Einstellung ihrer spezifischen Parameter können variiert werden, um eine angemessene Umgebungsabdeckung zu gewährleisten, die Rechenlast zu steuern und die Lokalisierungsrobustheit zu optimieren.
 
 == LiDAR-Scans und Merkmalsextraktion <sec:merkmale>
 
-Nachdem das Grid über der Umgebungskarte generiert wurde und somit die diskreten Lokalisierungspunkte festgelegt sind, wird für jeden dieser Grid-Knoten eine Merkmalsbeschreibung basierend auf simulierten Lidar-Scans erstellt. Hierzu wird für jeden einzelnen Grid-Knoten ein Lidar-Scan von seiner spezifischen Position aus simuliert. Diese Simulation erzeugt eine Punktwolke, welche die sichtbaren Umgebungsmerkmale aus der Perspektive des jeweiligen Grid-Knotens darstellt.
-Aus dieser simulierten Punktwolke werden anschließend verschiedene Isovist-Merkmale extrahiert. Diese Merkmale quantifizieren unterschiedliche Aspekte der sichtbaren Fläche und dienen als räumlicher "Fingerabdruck" für jeden Grid-Knoten. Es werden die folgenden Isovist-Merkmale verwendet:
+Nach der Generierung des Grids über der Umgebungskarte und der Festlegung der diskreten Lokalisierungspunkte wird für jeden Grid-Knoten eine Merkmalsbeschreibung erstellt, die auf simulierten LiDAR-Scans basiert. Dazu wird für jeden einzelnen Grid-Knoten ein LiDAR-Scan von seiner spezifischen Position aus simuliert. Diese Simulation erzeugt eine Punktwolke, die die sichtbaren Umgebungsmerkmale aus der Perspektive des jeweiligen Grid-Knotens darstellt.
 
-*Fläche:* Dieses Merkmal repräsentiert die gesamte sichtbare Fläche vom jeweiligen Standpunkt aus. Die Fläche des Isovist-Polygons wird unter Verwendung des Shoelace-Algorithmus berechnet:
+#figure(
+  image("assets/features.png", width: 90%),
+  caption: "Beispiel von Isovisten-Merkmalen auf einer Umgebungskarte.",
+)<fig:isovists_features>
 
+Aus den simulierten LiDAR-Scans, die für jeden Grid-Knoten erstellt werden, werden anschließend verschiedene Isovisten-Merkmale extrahiert. Diese Merkmale quantifizieren unterschiedliche Aspekte der jeweiligen sichtbaren Fläche und dienen als räumlicher "Fingerabdruck" für den jeweiligen Grid-Knoten, wie in @fig:isovists_features beispielhaft dargestellt. Es werden die folgenden Isovisten-Merkmale verwendet:
+
+*Fläche:* Dieses Merkmal stellt die gesamte vom jeweiligen Standpunkt aus sichtbare Fläche dar. Die Fläche des Isovisten-Polygons wird mittels des Shoelace-Algorithmus berechnet:
 $ "Fläche" = 1 / 2 abs(sum^N_(i=1) x_i (y_i+1 - y_y-1)) $
 
-*Umfang:* Dieses Merkmal beschreibt die Gesamtlänge der Begrenzungslinie des Isovisten bzw. Der Umfang des Isovisten-Polygons ist die Summe der Längen seiner Begrenzungssegmente:
+*Umfang:* Dieses Merkmal beschreibt die Gesamtlänge der Begrenzungslinie des Isovisten. Der Umfang des Isovisten-Polygons ist die Summe der Längen seiner Begrenzungssegmente:
 $ "Umfang" = sum^N_(i=1) sqrt((x_(i+1)-x_i)^2 + (y_(i+1)-y_i)^2) $
 
-*Kompaktheit:* Dieses Merkmal gibt ein Maß dafür an, wie "kreisförmig" die sichtbare Fläche ist. Die Kompaktheit ist ein dimensionsloses Maß, definiert als:
+*Kompaktheit:* Dieses Merkmal quantifiziert die "Kreisförmigkeit" der sichtbaren Fläche. Die Kompaktheit ist ein dimensionsloses Maß, definiert als:
 $ "Kompaktheit" = (4 pi dot "Fläche") / "Umfang"^2 $
 
-*Drift:* Dieses Merkmal repräsentiert die Distanz vom Standpunkt $(v_x, v_y)$ zum Schwerpunkt $(c_x, c_y)$ des Isovist-Polygons:
+*Drift:* Dieses Merkmal repräsentiert die Distanz vom Standpunkt $(v_x, v_y)$ zum Schwerpunkt $(c_x, c_y)$ des Isovisten-Polygons:
 $ "Drift" = sqrt((c_x - v_x)^2 + (c_y - v_y)^2) $
 
 Die Schwerpunktkoordinaten $(c_y, c_y)$ werden berechnet als:
@@ -173,7 +184,7 @@ $
 
 #v(0.5em)
 
-*Radiale Momente (Mittelwert, Varianz, Schiefe):* Die radialen Momente quantifizieren Eigenschaften der sichtbaren Fläche basierend auf der Verteilung des radialen Abstands vom Standpunkt zur Isovist-Begrenzung. Für einen polygonalen Isovisten werden die rohen radialen Momente $M_1, M_2, M_3$ wie folgt berechnet:
+*Radiale Momente (Mittelwert, Varianz, Schiefe):* Die radialen Momente quantifizieren Eigenschaften der sichtbaren Fläche basierend auf der Verteilung des radialen Abstands vom Standpunkt zur Isovisten-Begrenzung. Für einen polygonalen Isovisten werden die rohen radialen Momente $M_1, M_2, M_3$ wie folgt berechnet:
 
 $
   M_("avg") &= a_1 \
@@ -181,7 +192,7 @@ $
   M_("skew") &= a_3 - 3 M_("avg") a_2 + 2 M_("avg")^3
 $
 
-wobei die Terme $a_1, a_2, a_3$ sich auf die Summe über alle Begrenzungssegmente $i$ des Isovist-Polygons beziehen und wie folgt definiert sind:
+wobei sich die Terme $a_1, a_2, a_3$ auf die Summe über alle Begrenzungssegmente $i$ des Isovisten-Polygons beziehen und wie folgt definiert sind:
 
 $
   a_1 = sum^N_(i=1) a_1(i) #h(4em)
@@ -197,24 +208,22 @@ $
   a_3(i) &= 1 / 2 gamma_i ((a_i b_i ) / c_i sin gamma_i)^3 [csc alpha_i cot alpha_i + csc beta_i cot beta_i + \ &#h(9em) log abs((csc alpha_i + cot alpha_i)(csc beta_i + cot beta_i)) ]
 $
 
-Die geometrischen Parameter für Seitenlängen ($a_i, b_i, c_i$) und Winkel ($alpha_i, beta_i, gamma_i$) beziehen sich auf das Dreieck, das durch den Standpunkt und das $i$-te Begrenzungssegment gebildet wird.
+#figure(
+  image("assets/isovist_triangle.png", width: 90%),
+  caption: "Segment-Dreieck mit Standpunkt und Isovisten-Eckpunkten.",
+)<fig:isovist_triangle>
 
-// TODO: Grafik zur Visualisierung dieses Dreiecks erstellen
+Die geometrischen Parameter für Seitenlängen ($a_i, b_i, c_i$) und Winkel ($alpha_i, beta_i, gamma_i$) beziehen sich auf das Segment-Dreieck, das durch den Standpunkt und die beiden benachbarten Eckpunkte des Isovisten-Polygons gebildet wird (siehe @fig:isovist_triangle).
 
-Diese extrahierten Isovisten-Merkmale werden als Vektor zusammen mit der Position des jeweiligen Knotens gespeichert. Dies bildet den Datensatz bekannter Merkmale, der für die Relokalisierung nach Kidnapping des Roboters benötigt wird.
+Diese extrahierten Isovisten-Merkmale werden als Vektor zusammen mit der Position des jeweiligen Knotens gespeichert. Dies bildet den Datensatz bekannter Merkmale, welcher für die Relokalisierung nach einem Kidnapping des Roboters benötigt wird.
 
 == Relokalisierung
 
-Die Effizienz und Robustheit dieses Relokalisierungsprozesses hängen von der Dichte des Kartengrids, der Diskriminierungsfähigkeit der gewählten Isovisten-Merkmale und der Effizienz des Vergleichsalgorithmus ab. Nachdem die Isovisten-Merkmale sowohl für die generierten Grid-Knoten (basierend auf Simulationen) als auch für den aktuellen Lidar-Scan des Roboters extrahiert wurden (@fig:isovists_features), besteht der nächste Schritt darin, die Ähnlichkeit zwischen dem aktuellen Merkmalsvektor des Roboters und den gespeicherten Merkmalsvektoren jedes Grid-Knotens zu bestimmen.
+Die Effizienz und Robustheit dieses Relokalisierungsprozesses sind abhängig von der Dichte des Kartengrids, der Unterscheidungsfähigkeit der gewählten Isovisten-Merkmale und der Effizienz des Vergleichsalgorithmus. Nach der Extraktion der Isovisten-Merkmale für die generierten Grid-Knoten (basierend auf Simulationen) und den aktuellen LiDAR-Scan des Roboters ist der nächste Schritt die Bestimmung der Ähnlichkeit zwischen dem aktuellen Merkmalsvektor des Roboters und den gespeicherten Merkmalsvektoren jedes Grid-Knotens.
 
-Diese Ähnlichkeitsbestimmung erfolgt mithilfe einer geeigneten Distanzfunktion. Durch die Berechnung der Distanz zwischen den Merkmalsvektoren kann quantifiziert werden, wie ähnlich die aktuelle Sicht des Roboters der simulierten Sicht an jedem einzelnen Grid-Knoten ist. Für diesen Zweck können verschiedene Distanzfunktionen eingesetzt werden, darunter die euklidische Distanz, die Kosinus-Ähnlichkeit und die Manhattan-Distanz. Die Wahl der Distanzfunktion kann die Interpretation von Ähnlichkeit im Merkmalsraum beeinflussen und sollte auf die Eigenschaften der verwendeten Isovist-Merkmale abgestimmt sein.
+Die Ähnlichkeitsbestimmung erfolgt mittels einer geeigneten Distanzfunktion. Zuvor werden alle Merkmalswerte der Isovisten-Vektoren normalisiert, üblicherweise in einen Wertebereich von 0 bis 1. Dies verhindert eine Dominanz einzelner Merkmale im Vergleichsprozess aufgrund ihrer Wertebereiche. Durch die Distanzberechnung zwischen den normalisierten Merkmalsvektoren wird die Ähnlichkeit der aktuellen Sicht des Roboters mit der simulierten Sicht an jedem Grid-Knoten quantifiziert. Hierfür können verschiedene Distanzfunktionen eingesetzt werden, darunter die euklidische Distanz, die Kosinus-Ähnlichkeit und die Manhattan-Distanz. Die Wahl der Distanzfunktion kann die Interpretation von Ähnlichkeit im Merkmalsraum beeinflussen und sollte auf die Eigenschaften der Isovisten-Merkmale abgestimmt sein.
 
-Der Grid-Knoten, dessen Merkmalsvektor die geringste Distanz (oder höchste Ähnlichkeit) zum aktuellen Merkmalsvektor des Roboters aufweist, wird als die wahrscheinlichste Position des Roboters angenommen. Der Die Position des Roboters wird somit auf den Ort dieses am besten passenden Grid-Knotens im Kartengrid geschätzt.
-
-#figure(
-  image("assets/features.png", width: 100%),
-  caption: "Karte mit Isovisten-Merkmalen",
-)<fig:isovists_features>
+Der Grid-Knoten, dessen Merkmalsvektor die geringste Distanz (oder höchste Ähnlichkeit) zum aktuellen Merkmalsvektor des Roboters aufweist, wird als dessen wahrscheinlichste Position angenommen. Die Position des Roboters wird somit auf den Ort dieses am besten passenden Grid-Knotens im Kartengrid geschätzt.
 
 = Implementation
 

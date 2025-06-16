@@ -87,7 +87,7 @@ Das Kidnapped Robot Problem zu lösen ist zentral für robuste Indoor-Lokalisier
 
 #figure(
   image("assets/isovist.png", width: 80%),
-  caption: "Visueller Bereich (Isovisten) von einem Standpunkt aus in einer Umgebung.",
+  caption: "Sichtbare Fläche von einem Standpunkt aus in einer Umgebung.",
 ) <fig:isovist>
 
 Isovisten werden formal als "the set of all points visible from a given vantage point in space and with respect to the environment" definiert @benedikt_takeholdspace_1979. Wie in @fig:isovist gezeigt, bildet sich von einem Standpunkt aus die sichtbare Fläche. Nicht sichtbare Bereiche werden durch Wände begrenzt. Isovisten können unterschiedlich dargestellt werden, zum Beispiel als Sichtbarkeitsgraphen oder Polyeder für 3D-Darstellungen und Polygone im zweidimensionalen Bereich. Diese Darstellungen dienen als eindeutiger räumlicher "Fingerabdruck" für einen bestimmten Standort.
@@ -119,9 +119,9 @@ Die Grundlage des Lokalisierungsansatzes bildet ein Grid, das auf der Umgebungsk
     )<fig:grid_random>],
 )
 
-Die erste Variante ist ein orthogonales Grid (kartesisches Grid), das üblicherweise für Isovisten-Analysen verwendet wird. Bei dieser Gridstruktur sind zwei Liniensätze senkrecht zueinander angeordnet (@fig:grid_ortho). Dies ermöglicht eine gleichmäßige Abdeckung. Jedoch sind die Nachteile des orthogonalen Grids bezüglich Ausrichtung zur Gebäudestruktur, Approximation gekrümmter Flächen und Umgang mit schmalen Öffnungen bekannt @conroy_dalton_isovist_2022. Der Abstand zwischen den Grid-Linien ist einstellbar, was die Dichte der Lokalisierungspunkte beeinflusst.
+Die erste Variante ist ein orthogonales Grid (kartesisches Grid), das üblicherweise für Isovisten-Analysen verwendet wird. Bei dieser Gridstruktur sind zwei Liniensätze senkrecht zueinander angeordnet (@fig:grid_ortho). Dies ermöglicht eine gleichmäßige Abdeckung. Jedoch sind die Nachteile des orthogonalen Grids bezüglich Ausrichtung zur Gebäudestruktur, Approximation gekrümmter Flächen und Umgang mit schmalen Öffnungen bekannt @conroy_dalton_isovist_2022. Der Abstand zwischen den Grid-Linien im Simulator ist einstellbar, was die Dichte der Lokalisierungspunkte beeinflusst.
 
-Als zweite Variante kann eine eingeschränkte zufällige Verteilung der Grid-Knoten verwendet werden. Dies orientiert sich an Konzepten wie der Restricted Randomised Visibility Graph Analysis (R-VGA). Diese Methode strebt eine robustere Analyse an, die weniger von der spezifischen Grid-Platzierung abhängt @conroy_dalton_isovist_2022. Die Lokalisierungspunkte werden hierbei nicht in einem starren Gridmuster platziert, sondern nach einem Verfahren, das eine gleichmäßigere Verteilung sicherstellt (@fig:grid_random). Bei der eingeschränkten zufälligen Verteilung kann die Gesamtanzahl der Grid-Knoten festgelegt werden, wodurch die Dichte der Lokalisierungspunkte kontrolliert wird.
+Als zweite Variante kann eine eingeschränkte zufällige Verteilung der Grid-Knoten verwendet werden. Dies orientiert sich an Konzepten wie der "Restricted Randomised Visibility Graph Analysis" (R-VGA). Diese Methode strebt eine robustere Analyse an, die weniger von der spezifischen Grid-Platzierung abhängt @conroy_dalton_isovist_2022. Die Lokalisierungspunkte werden hierbei nicht in einem starren Gridmuster platziert, sondern nach einem Verfahren, das eine gleichmäßigere Verteilung sicherstellt (@fig:grid_random). Bei der eingeschränkten zufälligen Verteilung kann die Gesamtanzahl der Grid-Knoten festgelegt werden, wodurch die Dichte der Lokalisierungspunkte kontrolliert wird.
 
 #grid(
   columns: 2,
@@ -219,13 +219,13 @@ Diese extrahierten Isovisten-Merkmale werden als Vektor mit der Position des jew
 
 == Relokalisierung
 
-Die Effizienz und Robustheit der Relokalisierung hängen von der Dichte des Kartengrids, der Unterscheidungsfähigkeit der Isovisten-Merkmale und der Effizienz des Vergleichsalgorithmus ab. Nach der Extraktion der Isovisten-Merkmale für die generierten Grid-Knoten (basierend auf Simulationen) und den aktuellen LiDAR-Scan des Roboters wird die Ähnlichkeit zwischen dem aktuellen Merkmalsvektor des Roboters und den gespeicherten Merkmalsvektoren jedes Grid-Knotens bestimmt.
+Die Effizienz und Robustheit der Relokalisierung hängen von der Dichte des Kartengrids, der Unterscheidungsfähigkeit der Isovisten-Merkmale und der Effizienz des Vergleichsalgorithmus ab. Nach der Extraktion der Isovisten-Merkmale für die generierten Grid-Knoten (basierend auf Simulationen) und den aktuellen LiDAR-Scan des Roboters wird die Ähnlichkeit bestimmt.
 
 Die Ähnlichkeitsbestimmung erfolgt mittels passender Methoden. Zuerst werden die Merkmalswerte der Isovisten-Vektoren normalisiert. Dies geschieht meist in einem Bereich von 0 bis 1, um zu verhindern, dass einzelne Merkmale durch ihre Wertebereiche den Vergleich dominieren. Für die normalisierten Merkmalsvektoren wird die Ähnlichkeit der aktuellen Sicht des Roboters mit der simulierten Sicht an jedem Grid-Knoten durch Distanzberechnung ermittelt. Hierfür können verschiedene Distanzfunktionen wie die euklidische Distanz, die Kosinus-Ähnlichkeit und die Manhattan-Distanz genutzt werden. Die Wahl der Ähnlichkeits- oder Distanzfunktion sollte zu den Eigenschaften der verwendeten Isovisten-Merkmale passen.
 
-Die radiale Sequenz ist ein Array und lässt sich nicht direkt mit den erwähnten Distanzfunktionen vergleichen. Eine Normalisierung ist hier nicht nötig. Für dieses Merkmal wird Dynamic Time Warping (DTW) eingesetzt, um die Ähnlichkeit zweier Sequenzen zu bestimmen. Bei DTW sind Einstellungen verfügbar, die 25 %, 50 %, 75 % oder 100 % der Sequenzlänge berücksichtigen. Dies kann die Leistung der Rekolokalisierung beeinflussen.
+Die radiale Sequenz ist ein Array und lässt sich nicht direkt mit den erwähnten Distanzfunktionen vergleichen. Eine Normalisierung ist auch hier nicht nötig. Für dieses Merkmal wird Dynamic Time Warping (DTW) eingesetzt, um die Ähnlichkeit zweier Sequenzen zu bestimmen. Bei DTW sind Einstellungen verfügbar, die 25%, 50%, 75% oder 100% der Sequenzlänge berücksichtigen. Dies kann die Leistung der Rekolokalisierung beeinflussen.
 
-Der Grid-Knoten mit der geringsten Distanz (oder höchsten Ähnlichkeit) zum aktuellen Merkmalsvektor des Roboters wird als wahrscheinlichste Position angenommen. Die Roboterposition wird somit auf den Ort dieses am besten passenden Grid-Knotens im Kartengrid geschätzt.
+Der Grid-Knoten, dessen Merkmalsvektor die höchste Ähnlichkeit (oder geringste Distanz) zum aktuellen Merkmalsvektor des Roboters aufweist, wird als wahrscheinlichste Position angenommen. Die Roboterposition wird somit auf den Ort dieses am besten passenden Grid-Knotens im Kartengrid geschätzt.
 
 = Implementation
 

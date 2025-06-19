@@ -180,7 +180,7 @@ $
   R_("avg") &= 1 / N sum^N_(i=1) r_i \
   R_("max") &= max(r_1, r_2, ..., r_N) \
   R_("seq") &= [r_1, r_2, ..., r_N]
-$ <math:radial_length>
+$
 
 #v(0.5em)
 
@@ -221,7 +221,13 @@ Diese extrahierten Isovisten-Merkmale werden als Vektor zusammen mit der Positio
 
 Die Effizienz und Robustheit der Relokalisierung hängen von der Dichte des Karten-Grids (@sec:grid), der Unterscheidungsfähigkeit der Isovisten-Merkmale (@sec:merkmale) und der Effizienz des Vergleichsalgorithmus ab. Nach der Extraktion der Isovisten-Merkmale für die generierten Grid-Knoten (basierend auf Simulationen) und des aktuellen LiDAR-Scans des Roboters wird die Ähnlichkeit bestimmt.
 
-Zuerst werden die Merkmalswerte der Isovisten-Vektoren normalisiert. Dies geschieht meist in einem Bereich von 0 bis 1, um zu verhindern, dass einzelne Merkmale durch ihre Wertebereiche den Vergleich dominieren. Für die normalisierten Merkmalsvektoren wird die Ähnlichkeit der aktuellen Sicht des Roboters mit der simulierten Sicht an jedem Grid-Knoten durch Distanzberechnung ermittelt. Hierfür können verschiedene Distanzfunktionen wie die euklidische Distanz, die Kosinus-Ähnlichkeit und die Manhattan-Distanz eingesetzt werden. Die Wahl der Ähnlichkeits- oder Distanzfunktion sollte zu den Eigenschaften der verwendeten Isovisten-Merkmale passen.
+Zuerst werden die Merkmalswerte der Isovisten-Vektoren normalisiert. Dies geschieht üblicherweise in einem Bereich von 0 bis 1, um zu verhindern, dass einzelne Merkmale durch ihre Wertebereiche den Vergleich dominieren. Für die normalisierten Merkmalsvektoren wird die Ähnlichkeit der aktuellen Sicht des Roboters mit der simulierten Sicht an jedem Grid-Knoten durch Distanzberechnung ermittelt. Hierfür können verschiedene Distanzfunktionen eingesetzt werden, darunter die euklidische Distanz, die Manhattan-Distanz und die Kosinus-Ähnlichkeit (siehe Formeln unten). Die Wahl der Distanz- oder Ähnlichkeitsfunktion sollte zu den Eigenschaften der verwendeten Isovisten-Merkmale passen.
+
+$
+  "Euklidische Distanz" &= sqrt(sum_(i=1)^n (A_i-B_i)^2) \
+  "Manhattan-Distanz" &= sum_(i=1)^n abs(A_i-B_i) \
+  "Kosinus-Ähnlichkeit" &= frac(A dot B, ||A||||B||) = frac(sum_(i=1)^n A_i B_i, sqrt(sum_(i=1)^n A_i^2) sqrt(sum_(i=1)^n B_i^2))
+$
 
 Die $R_("seq")$ radiale Sequenz (@sec:merkmale) ist ein Array und lässt sich nicht direkt mit den erwähnten Distanzfunktionen vergleichen. Eine Normalisierung ist auch hier nicht nötig. Für dieses Merkmal wird Dynamic Time Warping (DTW) eingesetzt, um die Ähnlichkeit zweier Sequenzen zu bestimmen. Bei DTW sind Einstellungen verfügbar, die 25 %, 50 %, 75 % oder 100 % der Sequenzlänge berücksichtigen. Dies kann die Leistung der Relokalisierung beeinflussen.
 

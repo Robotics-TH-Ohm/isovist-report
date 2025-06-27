@@ -384,10 +384,10 @@ Dabei konnte der geringste Fehler bei Verwendung aller Isovisten-Merkmale erziel
   (79.16, 79.16, 12.08),
 )
 #let meanAt(i) = calc.round(samples.map(sample => sample.at(i)).sum() / samples.len(), digits: 2)
-#[
-  #set text(size: 9.5pt)
-  #figure(
-    placement: auto,
+#figure(
+  placement: auto,
+  {
+    set text(size: 9.5pt)
     table(
       columns: (auto, auto, auto, auto),
       table.header(
@@ -395,10 +395,10 @@ Dabei konnte der geringste Fehler bei Verwendung aller Isovisten-Merkmale erziel
       ),
       ..samples.enumerate().map(x => ([#(x.at(0) + 1)], ..x.at(1).map(v => [#calc.round(v, digits: 2)]))).flatten(),
       [*$overline(epsilon)$*], [*#meanAt(0)*], [*#meanAt(1)*], [*#meanAt(2)*],
-    ),
-    caption: [Distanzen zwischen tatsächlicher und geschätzter Position],
-  ) <tab:fehler>
-]
+    )
+  },
+  caption: [Distanzen zwischen tatsächlicher und geschätzter Position],
+) <tab:fehler>
 
 Hervorzuheben ist der bei Sample 5 auftretende hohe Fehlerwert.
 Dieser ist vorrangig auf die hoch symmetrische Umgebung zurückzuführen.

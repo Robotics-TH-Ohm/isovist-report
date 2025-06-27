@@ -149,7 +149,7 @@ Nachdem das Grid über der Umgebungskarte erstellt und die diskreten Lokalisieru
   caption: "Beispiel für einige Isovisten-Merkmale auf einer Umgebungskarte.",
 )<fig:isovists_features>
 
-Aus den simulierten LiDAR-Scans jedes Grid-Knotens werden anschließend verschiedene Isovisten-Merkmale extrahiert. Diese Merkmale quantifizieren unterschiedliche Aspekte der jeweiligen sichtbaren Fläche. Sie dienen als räumlicher "Fingerabdruck" für den jeweiligen Grid-Knoten, wie in @fig:isovists_features beispielhaft dargestellt. Folgende Isovisten-Merkmale werden verwendet:
+Aus den simulierten LiDAR-Scans jedes Grid-Knotens werden anschließend verschiedene Isovisten-Merkmale extrahiert. Diese Merkmale quantifizieren unterschiedliche Aspekte der jeweiligen sichtbaren Fläche. Sie dienen als räumlicher "Fingerabdruck" für den jeweiligen Grid-Knoten, wie in @fig:isovists_features beispielhaft dargestellt. Die Auswahl der Isovisten-Merkmale basiert auf den Arbeiten von Benedikt @benedikt_takeholdspace_1979 - hierzu zählen _Fläche_, _Umfang_ und _Radiale Momente_ - sowie Conroy-Dalton @conroy-dalton_OmniVistaapplicationisovist_2001, welche _Kompaktheit_, _Drift_ und _Radiale Länge_ einführen. Ergänzend dazu wurde die _Radiale Längen-Sequenz_ als eigenständiges Merkmal konzipiert. Die folgenden Isovisten-Merkmale kommen zur Anwendung:
 
 *Fläche:* Dieses Merkmal stellt die gesamte vom jeweiligen Standpunkt aus sichtbare Fläche dar. Die Fläche des Isovisten-Polygons wird mittels des Shoelace-Algorithmus berechnet:
 $ "Fläche" = 1 / 2 abs(sum^N_(i=1) x_i (y_i+1 - y_y-1)) $
@@ -176,10 +176,10 @@ $ r_i = sqrt((x_i - v_x)^2 + (y_i - v_y)^2) $
 Die radialen Längenmerkmale $R$, abgeleitet von der oben definierten Distanz $r_i$, sind wie folgt definiert:
 
 $
-  R_("min") &= min(r_1, r_2, ..., r_N) \
-  R_("avg") &= 1 / N sum^N_(i=1) r_i \
-  R_("max") &= max(r_1, r_2, ..., r_N) \
-  R_("seq") &= [r_1, r_2, ..., r_N]
+  R_("min") & = min(r_1, r_2, ..., r_N) \
+  R_("avg") & = 1 / N sum^N_(i=1) r_i   \
+  R_("max") & = max(r_1, r_2, ..., r_N) \
+  R_("seq") & = [r_1, r_2, ..., r_N]
 $
 
 #v(0.5em)
@@ -187,9 +187,9 @@ $
 *Radiale Momente (Mittelwert, Varianz, Schiefe):* Die radialen Momente quantifizieren Eigenschaften der sichtbaren Fläche basierend auf der Verteilung des radialen Abstands vom Standpunkt zur Isovisten-Begrenzung. Für einen polygonalen Isovisten werden die rohen radialen Momente $M_1, M_2, M_3$ wie folgt berechnet:
 
 $
-  M_("avg") &= a_1 \
-  M_("var") &= a_2 - M_("avg")^2 \
-  M_("skew") &= a_3 - 3 M_("avg") a_2 + 2 M_("avg")^3
+   M_("avg") & = a_1                                   \
+   M_("var") & = a_2 - M_("avg")^2                     \
+  M_("skew") & = a_3 - 3 M_("avg") a_2 + 2 M_("avg")^3
 $
 
 wobei sich die Terme $a_1, a_2, a_3$ auf die Summe über alle Begrenzungssegmente $i$ des Isovisten-Polygons beziehen und wie folgt definiert sind:
@@ -267,33 +267,23 @@ Für diese Menge gilt es, Isovisten-Merkmale zu berechnen.
 
   {
     import algorithmic: *
-    Function(
-      "Erreichbar",
-      ("H", "s"),
-      {
-        LineComment(Assign[$R$][${}$], [Menge erreichbarer Zellen])
-        LineComment(Assign[$Q$][${s}$], [Menge zu überprüfender Zellen])
-        LineBreak
-        While(
-          $Q != {}$,
-          {
-            LineComment(Assign([c], [$Q$.pop()]), [Nehme nächste Zelle aus der Queue])
-            If(
-              $c in.not H and c in.not R$,
-              {
-                Comment[Zelle ist kein Hindernis und wurde noch nicht betrachtet]
-                LineComment(Assign[$R$][$R union c$], [Markiere Zelle als erreichbar])
-                LineComment(
-                  Assign[$Q$][$Q union {"c.north()", "c.east()", "c.south()", "c.west()"}$],
-                  [Betrachte alle Nachbarn],
-                )
-              },
-            )
-          },
-        )
-        Return[$R$]
-      },
-    )
+    Function("Erreichbar", ("H", "s"), {
+      LineComment(Assign[$R$][${}$], [Menge erreichbarer Zellen])
+      LineComment(Assign[$Q$][${s}$], [Menge zu überprüfender Zellen])
+      LineBreak
+      While($Q != {}$, {
+        LineComment(Assign([c], [$Q$.pop()]), [Nehme nächste Zelle aus der Queue])
+        If($c in.not H and c in.not R$, {
+          Comment[Zelle ist kein Hindernis und wurde noch nicht betrachtet]
+          LineComment(Assign[$R$][$R union c$], [Markiere Zelle als erreichbar])
+          LineComment(
+            Assign[$Q$][$Q union {"c.north()", "c.east()", "c.south()", "c.west()"}$],
+            [Betrachte alle Nachbarn],
+          )
+        })
+      })
+      Return[$R$]
+    })
   },
 ) <alg:reachable>
 
@@ -303,14 +293,8 @@ Rote Zellen sind dabei von Hindernissen betroffen, während grüne Zellen als er
 #grid(
   columns: 2,
   column-gutter: 1em,
-  [#figure(
-      image("assets/environment.png", width: 90%),
-      caption: [Umgebung des Roboters],
-    )<fig:environment>],
-  [#figure(
-      image("assets/grid.png", width: 90%),
-      caption: [Approximation der Umgebung als Grid],
-    )<fig:grid>],
+  [#figure(image("assets/environment.png", width: 90%), caption: [Umgebung des Roboters])<fig:environment>],
+  [#figure(image("assets/grid.png", width: 90%), caption: [Approximation der Umgebung als Grid])<fig:grid>],
 )
 
 == Berechnung der Isovisten-Merkmale
@@ -326,8 +310,8 @@ Dabei ist zu beachten, dass der rohe Lidar-Scan keinerlei Informationen zu den K
 Es ist lediglich der Winkel $theta$ (ausgehend vom 0°-Punkt des Lidar-Sensors), die gemessene Distanz zum Hindernispunkt sowie die Validität der Messung (z. B. da kein Hindernis getroffen wurde) gegeben.
 Die Messungen können als Polarkoordinaten betrachtet und mit dieser Formel in kartesische Koordinaten umgerechnet werden:
 $
-  x_i &= sin(theta) * "Distanz" \
-  y_i &= cos(theta) * "Distanz"
+  x_i & = sin(theta) * "Distanz" \
+  y_i & = cos(theta) * "Distanz"
 $
 Die so ermittelten Punkte lassen sich anschließend für die Merkmalsberechnung nutzen, wobei bei allen invaliden Messungen angenommen wird, dass das Hindernis direkt nach Ende der Sichtweite existiert.
 Ein simulierter Lidar-Scan ist in @fig:lidar-scan zu sehen.
@@ -336,14 +320,8 @@ Der daraus berechnete Isovist kann @fig:lidar-isovist entnommen werden.
 #grid(
   columns: 2,
   column-gutter: 1em,
-  [#figure(
-      image("assets/lidar.png", width: 90%),
-      caption: [Roher Lidar-Scan des Roboters],
-    )<fig:lidar-scan>],
-  [#figure(
-      image("assets/lidar-isovist.png", width: 90%),
-      caption: [Aus Lidar-Scan berechneter Isovist],
-    )<fig:lidar-isovist>],
+  [#figure(image("assets/lidar.png", width: 90%), caption: [Roher Lidar-Scan des Roboters])<fig:lidar-scan>],
+  [#figure(image("assets/lidar-isovist.png", width: 90%), caption: [Aus Lidar-Scan berechneter Isovist])<fig:lidar-isovist>],
 )
 
 = Ergebnisse und Diskussion
@@ -359,14 +337,8 @@ Die geschätzte Position ist als blaues Kreuz dargestellt, während die Abweichu
 #grid(
   columns: 2,
   column-gutter: 1em,
-  [#figure(
-      image("assets/isovist-full.png", width: 90%),
-      caption: [Lokalisation anhand eines Isovisten],
-    )<fig:isovist-full>],
-  [#figure(
-      image("assets/isovist-closeup.png", width: 90%),
-      caption: [Fehler der Lokalisation],
-    )<fig:isovist-closeup>],
+  [#figure(image("assets/isovist-full.png", width: 90%), caption: [Lokalisation anhand eines Isovisten])<fig:isovist-full>],
+  [#figure(image("assets/isovist-closeup.png", width: 90%), caption: [Fehler der Lokalisation])<fig:isovist-closeup>],
 )
 
 Zur quantitativen Analyse der Genauigkeit der Lokalisierungsstrategie wird der Roboter an zehn zufälligen Positionen abgesetzt und anschließend die Position ermittelt.
@@ -398,10 +370,7 @@ Dabei konnte der geringste Fehler bei Verwendung aller Isovisten-Merkmale erziel
   table(
     columns: (auto, auto, auto, auto),
     table.header(
-      [*Sample \#*],
-      [*Experiment 1 ($epsilon$)*],
-      [*Experiment 2 ($epsilon$)*],
-      [*Experiment 3 ($epsilon$)*],
+      [*Sample \#*], [*Experiment 1 ($epsilon$)*], [*Experiment 2 ($epsilon$)*], [*Experiment 3 ($epsilon$)*]
     ),
     ..samples.enumerate().map(x => ([#(x.at(0) + 1)], ..x.at(1).map(v => [#calc.round(v, digits: 2)]))).flatten(),
     [*$overline(epsilon)$*], [*#meanAt(0)*], [*#meanAt(1)*], [*#meanAt(2)*],

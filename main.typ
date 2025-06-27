@@ -145,12 +145,12 @@ Die Wahl der Gridstruktur und ihrer Parameter kann angepasst werden. Ziel ist es
 
 Nachdem das Grid über der Umgebungskarte erstellt und die diskreten Lokalisierungspunkte festgelegt wurden, wird für jeden Grid-Knoten eine Merkmalsbeschreibung basierend auf simulierten LiDAR-Scans erstellt. Dazu wird für jeden einzelnen Grid-Knoten ein LiDAR-Scan von seiner spezifischen Position aus simuliert. Diese Simulation erzeugt eine Punktwolke, die die sichtbaren Umgebungsmerkmale aus der Perspektive des jeweiligen Grid-Knotens abbildet.
 
-Aus den simulierten LiDAR-Scans jedes Grid-Knotens werden anschließend verschiedene Isovisten-Merkmale extrahiert. Diese Merkmale quantifizieren unterschiedliche Aspekte der jeweiligen sichtbaren Fläche. Sie dienen als räumlicher "Fingerabdruck" für den jeweiligen Grid-Knoten, wie in @fig:isovists_features beispielhaft dargestellt. Die Auswahl der Isovisten-Merkmale basiert auf den Arbeiten von Davis und Benedikt @davis_Computationalmodelsspace_1979 - hierzu zählen _Fläche_, _Umfang_ und _Radiale Momente_ - sowie Conroy-Dalton @conroy-dalton_OmniVistaapplicationisovist_2001, welche _Kompaktheit_, _Drift_ und _Radiale Länge_ einführen. Ergänzend dazu wurde die _Radiale Längen-Sequenz_ als eigenständiges Merkmal konzipiert. Die folgenden Isovisten-Merkmale kommen zur Anwendung:
-
 #figure(
-  image("assets/features.png", width: 50%),
+  image("assets/features.png", width: 80%),
   caption: "Beispiel für einige Isovisten-Merkmale auf einer Umgebungskarte.",
 )<fig:isovists_features>
+
+Aus den simulierten LiDAR-Scans jedes Grid-Knotens werden anschließend verschiedene Isovisten-Merkmale extrahiert. Diese Merkmale quantifizieren unterschiedliche Aspekte der jeweiligen sichtbaren Fläche. Sie dienen als räumlicher "Fingerabdruck" für den jeweiligen Grid-Knoten, wie in @fig:isovists_features beispielhaft dargestellt. Die Auswahl der Isovisten-Merkmale basiert auf den Arbeiten von Davis und Benedikt @davis_Computationalmodelsspace_1979 - hierzu zählen _Fläche_, _Umfang_ und _Radiale Momente_ - sowie Conroy-Dalton @conroy-dalton_OmniVistaapplicationisovist_2001, welche _Kompaktheit_, _Drift_ und _Radiale Länge_ einführen. Ergänzend dazu wurde die _Radiale Längen-Sequenz_ als eigenständiges Merkmal konzipiert. Die folgenden Isovisten-Merkmale kommen zur Anwendung:
 
 *Fläche:* Dieses Merkmal stellt die gesamte vom jeweiligen Standpunkt aus sichtbare Fläche dar. Die Fläche des Isovisten-Polygons wird mittels des Shoelace-Algorithmus berechnet:
 $ "Fläche" = 1 / 2 abs(sum^N_(i=1) x_i (y_i+1 - y_y-1)) $
@@ -210,7 +210,7 @@ $
 $
 
 #figure(
-  image("assets/isovist_triangle.png", width: 80%),
+  image("assets/isovist_triangle.png", width: 90%),
   caption: "Segment-Dreieck mit Standpunkt und Isovisten-Eckpunkten.",
 )<fig:isovist_triangle>
 
@@ -256,8 +256,6 @@ Zur Ermittlung aller durch den Roboter erreichbarer Zellen wird ausgehend von ei
 Ein möglicher Algorithmus ist in @alg:reachable gezeigt, wobei ausgehend von Startzelle $s$ unter Berücksichtigung der Hindernisse $H$ alle erreichbaren Zellen $R$ ermittelt werden.
 Für diese Menge gilt es, Isovisten-Merkmale zu berechnen.
 
-#v(10em)
-
 #import "@preview/algorithmic:1.0.0"
 #import algorithmic: algorithm-figure, style-algorithm
 
@@ -301,6 +299,8 @@ Rote Zellen sind dabei von Hindernissen betroffen, während grüne Zellen als er
   [#figure(image("assets/environment.png", width: 90%), caption: [Umgebung des Roboters])<fig:environment>],
   [#figure(image("assets/grid.png", width: 90%), caption: [Approximation der Umgebung als Grid])<fig:grid>],
 )
+
+#v(1em)
 
 == Berechnung der Isovisten-Merkmale
 
@@ -385,19 +385,19 @@ Dabei konnte der geringste Fehler bei Verwendung aller Isovisten-Merkmale erziel
 )
 #let meanAt(i) = calc.round(samples.map(sample => sample.at(i)).sum() / samples.len(), digits: 2)
 #[
-#set text(size: 9.5pt)
-#figure(
-  placement: auto,
-  table(
-    columns: (auto, auto, auto, auto),
-    table.header(
-      [*Sample \#*], [*Experiment 1 ($epsilon$)*], [*Experiment 2 ($epsilon$)*], [*Experiment 3 ($epsilon$)*]
+  #set text(size: 9.5pt)
+  #figure(
+    placement: auto,
+    table(
+      columns: (auto, auto, auto, auto),
+      table.header(
+        [*Sample \#*], [*Experiment 1 ($epsilon$)*], [*Experiment 2 ($epsilon$)*], [*Experiment 3 ($epsilon$)*]
+      ),
+      ..samples.enumerate().map(x => ([#(x.at(0) + 1)], ..x.at(1).map(v => [#calc.round(v, digits: 2)]))).flatten(),
+      [*$overline(epsilon)$*], [*#meanAt(0)*], [*#meanAt(1)*], [*#meanAt(2)*],
     ),
-    ..samples.enumerate().map(x => ([#(x.at(0) + 1)], ..x.at(1).map(v => [#calc.round(v, digits: 2)]))).flatten(),
-    [*$overline(epsilon)$*], [*#meanAt(0)*], [*#meanAt(1)*], [*#meanAt(2)*],
-  ),
-  caption: [Distanzen zwischen tatsächlicher und geschätzter Position],
-) <tab:fehler>
+    caption: [Distanzen zwischen tatsächlicher und geschätzter Position],
+  ) <tab:fehler>
 ]
 
 Hervorzuheben ist der bei Sample 5 auftretende hohe Fehlerwert.

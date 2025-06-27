@@ -12,6 +12,7 @@
 )
 
 #set text(font: "New Computer Modern", lang: "de", size: 12pt)
+#set par(leading: 0.55em)
 
 #set page(
   paper: "a4",
@@ -144,12 +145,12 @@ Die Wahl der Gridstruktur und ihrer Parameter kann angepasst werden. Ziel ist es
 
 Nachdem das Grid über der Umgebungskarte erstellt und die diskreten Lokalisierungspunkte festgelegt wurden, wird für jeden Grid-Knoten eine Merkmalsbeschreibung basierend auf simulierten LiDAR-Scans erstellt. Dazu wird für jeden einzelnen Grid-Knoten ein LiDAR-Scan von seiner spezifischen Position aus simuliert. Diese Simulation erzeugt eine Punktwolke, die die sichtbaren Umgebungsmerkmale aus der Perspektive des jeweiligen Grid-Knotens abbildet.
 
+Aus den simulierten LiDAR-Scans jedes Grid-Knotens werden anschließend verschiedene Isovisten-Merkmale extrahiert. Diese Merkmale quantifizieren unterschiedliche Aspekte der jeweiligen sichtbaren Fläche. Sie dienen als räumlicher "Fingerabdruck" für den jeweiligen Grid-Knoten, wie in @fig:isovists_features beispielhaft dargestellt. Die Auswahl der Isovisten-Merkmale basiert auf den Arbeiten von Davis und Benedikt @davis_Computationalmodelsspace_1979 - hierzu zählen _Fläche_, _Umfang_ und _Radiale Momente_ - sowie Conroy-Dalton @conroy-dalton_OmniVistaapplicationisovist_2001, welche _Kompaktheit_, _Drift_ und _Radiale Länge_ einführen. Ergänzend dazu wurde die _Radiale Längen-Sequenz_ als eigenständiges Merkmal konzipiert. Die folgenden Isovisten-Merkmale kommen zur Anwendung:
+
 #figure(
-  image("assets/features.png", width: 90%),
+  image("assets/features.png", width: 50%),
   caption: "Beispiel für einige Isovisten-Merkmale auf einer Umgebungskarte.",
 )<fig:isovists_features>
-
-Aus den simulierten LiDAR-Scans jedes Grid-Knotens werden anschließend verschiedene Isovisten-Merkmale extrahiert. Diese Merkmale quantifizieren unterschiedliche Aspekte der jeweiligen sichtbaren Fläche. Sie dienen als räumlicher "Fingerabdruck" für den jeweiligen Grid-Knoten, wie in @fig:isovists_features beispielhaft dargestellt. Die Auswahl der Isovisten-Merkmale basiert auf den Arbeiten von Davis und Benedikt @davis_Computationalmodelsspace_1979 - hierzu zählen _Fläche_, _Umfang_ und _Radiale Momente_ - sowie Conroy-Dalton @conroy-dalton_OmniVistaapplicationisovist_2001, welche _Kompaktheit_, _Drift_ und _Radiale Länge_ einführen. Ergänzend dazu wurde die _Radiale Längen-Sequenz_ als eigenständiges Merkmal konzipiert. Die folgenden Isovisten-Merkmale kommen zur Anwendung:
 
 *Fläche:* Dieses Merkmal stellt die gesamte vom jeweiligen Standpunkt aus sichtbare Fläche dar. Die Fläche des Isovisten-Polygons wird mittels des Shoelace-Algorithmus berechnet:
 $ "Fläche" = 1 / 2 abs(sum^N_(i=1) x_i (y_i+1 - y_y-1)) $
@@ -184,7 +185,7 @@ $
 
 #v(0.5em)
 
-*Radiale Momente (Mittelwert, Varianz, Schiefe):* Die radialen Momente quantifizieren Eigenschaften der sichtbaren Fläche basierend auf der Verteilung des radialen Abstands vom Standpunkt zur Isovisten-Begrenzung. Für einen polygonalen Isovisten werden die rohen radialen Momente $M_1, M_2, M_3$ wie folgt berechnet:
+*Radiale Momente (Mittelwert, Varianz, Schiefe):* Die radialen Momente quantifizieren Eigenschaften der sichtbaren Fläche basierend auf der Verteilung des radialen Abstands vom Standpunkt zur Isovisten-Begrenzung. Für einen polygonalen Isovisten werden die rohen radialen Momente $M_("avg"), M_("var"), M_("skew")$ wie folgt berechnet:
 
 $
    M_("avg") & = a_1                                   \
@@ -209,7 +210,7 @@ $
 $
 
 #figure(
-  image("assets/isovist_triangle.png", width: 90%),
+  image("assets/isovist_triangle.png", width: 80%),
   caption: "Segment-Dreieck mit Standpunkt und Isovisten-Eckpunkten.",
 )<fig:isovist_triangle>
 
@@ -233,7 +234,7 @@ Die $R_("seq")$ radiale Sequenz (@sec:merkmale) ist ein Array und lässt sich ni
 
 Der Grid-Knoten, dessen Merkmalsvektor die höchste Ähnlichkeit (oder geringste Distanz) zum aktuellen Merkmalsvektor des Roboters aufweist, wird als wahrscheinlichste Position angenommen. Die Roboterposition wird somit auf den Ort dieses am besten passenden Grid-Knotens im Karten-Grid geschätzt.
 
-= Implementation
+= Implementierung
 
 Die vorgestellte Methodik wird innerhalb des Carbot-Simulators umgesetzt, um die Robustheit der Lokalisierungsstrategie auf realitätsnah simulierten Lidar-Messungen testen zu können.
 Der virtuelle Lidar-Sensor besitzt eine Auflösung von 0,9° mit einer maximalen Sichtweite von sechs Metern.
@@ -244,15 +245,18 @@ Da diese z. B. durch Reflexion oder aufgrund der Sichtweite ungültig sind, ist 
 
 Zu Beginn ist die Arbeitsumgebung des Roboters zu kartografieren.
 Hierzu wird eine Menge an in der Umgebung vorhandenen Hindernispunkten benötigt.
-Diese kann einerseits durch dedizierte Messungen im Rahmen einer Kartografie-Aufgabe durch den Roboter generiert oder aus aus der manuellen Definition einer Karte der Arbeitsumgebung abgeleitet werden.
+Diese kann einerseits durch dedizierte Messungen im Rahmen einer Kartografie-Aufgabe durch den Roboter generiert oder aus der manuellen Definition einer Karte der Arbeitsumgebung abgeleitet werden.
 Die gesammelten Hindernispunkte werden als Punktwolke repräsentiert.
 
-Die Grundlage der Umgebungskarte bildet ein orthognoales Gitter über der Arbeitsumgebung, wobei eine Zellengröße bzw. Gitterknotenabstand in der Breite des Roboters gewählt wird.
+Die Grundlage der Umgebungskarte bildet ein orthogonales Gitter über der Arbeitsumgebung, wobei eine Zellengröße bzw. Gitterknotenabstand in der Breite des Roboters gewählt wird.
 Hierdurch kann die Lokalisierung auf einen maximalen Fehler in Höhe der halben Roboterbreite betrieben werden, was für diese Arbeit als ausreichend genau betrachtet wird.
 Die gesammelten Hindernispunkte werden anschließend in das Grid eingetragen, wobei jede Zelle, welche von einem Hindernispunkt getroffen wird, als nicht befahrbar zu betrachten ist.
+
 Zur Ermittlung aller durch den Roboter erreichbarer Zellen wird ausgehend von einer beliebigen erreichbaren Zelle (z. B. die nach der Kartografier-Fahrt bekannte Position des Roboters) radial auswärts jede Zelle markiert, welche von dieser erreichbar und kein Hindernis ist.
 Ein möglicher Algorithmus ist in @alg:reachable gezeigt, wobei ausgehend von Startzelle $s$ unter Berücksichtigung der Hindernisse $H$ alle erreichbaren Zellen $R$ ermittelt werden.
 Für diese Menge gilt es, Isovisten-Merkmale zu berechnen.
+
+#v(10em)
 
 #import "@preview/algorithmic:1.0.0"
 #import algorithmic: algorithm-figure, style-algorithm
@@ -287,6 +291,7 @@ Für diese Menge gilt es, Isovisten-Merkmale zu berechnen.
   },
 ) <alg:reachable>
 
+
 @fig:environment zeigt die in der Simulation verwendete Umgebung, welche nach Eintragen der Hindernispunkte als Grid approximiert ist (@fig:grid).
 Rote Zellen sind dabei von Hindernissen betroffen, während grüne Zellen als erreichbar markiert sind.
 
@@ -310,8 +315,8 @@ Dabei ist zu beachten, dass der rohe Lidar-Scan keinerlei Informationen zu den K
 Es ist lediglich der Winkel $theta$ (ausgehend vom 0°-Punkt des Lidar-Sensors), die gemessene Distanz zum Hindernispunkt sowie die Validität der Messung (z. B. da kein Hindernis getroffen wurde) gegeben.
 Die Messungen können als Polarkoordinaten betrachtet und mit dieser Formel in kartesische Koordinaten umgerechnet werden:
 $
-  x_i & = sin(theta) * "Distanz" \
-  y_i & = cos(theta) * "Distanz"
+  x_i & = sin(theta) dot.op "Distanz" \
+  y_i & = cos(theta) dot.op "Distanz"
 $
 Die so ermittelten Punkte lassen sich anschließend für die Merkmalsberechnung nutzen, wobei bei allen invaliden Messungen angenommen wird, dass das Hindernis direkt nach Ende der Sichtweite existiert.
 Ein simulierter Lidar-Scan ist in @fig:lidar-scan zu sehen.
@@ -323,6 +328,20 @@ Der daraus berechnete Isovist kann @fig:lidar-isovist entnommen werden.
   [#figure(image("assets/lidar.png", width: 90%), caption: [Roher Lidar-Scan des Roboters])<fig:lidar-scan>],
   [#figure(image("assets/lidar-isovist.png", width: 90%), caption: [Aus Lidar-Scan berechneter Isovist])<fig:lidar-isovist>],
 )
+
+Anschließend kann anhand der gewählten Distanzfunktion der im Merkmalsraum näheste Isovist ermittelt werden.
+Nach Empfehlung von @triantafyllou_IndoorLocalisationIsovist_2024 wird hierzu die euklidische Distanz verwendet.
+Die Position dieses Isovisten gibt die wahrscheinlichste Position des Roboters an.
+Zur Stabilisierung der Positionsermittlung wird empfohlen, mehrere Scans an unterschiedlichen Positionen durchzuführen, z. B. während einer kurzen Fahrt in der Arbeitsumgebung.
+Somit wird vermieden, dass durch einen ungünstiger Scan eine falsche --- im Zweifel weit von der tatsächlichen Position entfernten --- Position angenommen wird.
+
+Eine simple Lösung lässt sich durch Mehrheitsentscheidung anhand einer Menge an $n$ geschätzten Positionen implementieren.
+Während der Fahrt ermittelt der Roboter seine Position in regelmäßigen Intervallen und speichert diese, bis eine festgelegte Mindestanzahl erreicht ist.
+Der Mittelpunkt dieser Punktwolke an möglichen Positionen bildet zunächst die voraussichtlich korrekte Position.
+Wird ein neuer Scan aufgenommen, dessen Positionsabschätzung nahe dieser Position liegt, festigt dies die bisherige Vermutung und ersetzt den am weitesten entfernten Punkt in der Punktewolke.
+Andernfalls wird der Scan verworfen und ein neuer an einer anderen, in näherer Umgebung gelegenen Position aufgenommen.
+Mit zunehmender Anzahl konsistenter Schätzungen konvergiert der Mittelpunkt der Punktewolke zur tatsächlichen Position.
+Wird für längere Zeit keine in der Nähe der Punktewolke liegende Position geschätzt, so gilt die bisherige Annahme als nicht bestätigt und der Schätzprozess wird neu initialisiert.
 
 = Ergebnisse und Diskussion
 
@@ -365,6 +384,8 @@ Dabei konnte der geringste Fehler bei Verwendung aller Isovisten-Merkmale erziel
   (79.16, 79.16, 12.08),
 )
 #let meanAt(i) = calc.round(samples.map(sample => sample.at(i)).sum() / samples.len(), digits: 2)
+#[
+#set text(size: 9.5pt)
 #figure(
   placement: auto,
   table(
@@ -377,6 +398,7 @@ Dabei konnte der geringste Fehler bei Verwendung aller Isovisten-Merkmale erziel
   ),
   caption: [Distanzen zwischen tatsächlicher und geschätzter Position],
 ) <tab:fehler>
+]
 
 Hervorzuheben ist der bei Sample 5 auftretende hohe Fehlerwert.
 Dieser ist vorrangig auf die hoch symmetrische Umgebung zurückzuführen.
@@ -399,5 +421,6 @@ Die Abwägung zwischen Rechen- und Zeitaufwand zur Erreichung einer ausreichende
 Die in dieser Arbeit betrachtete Umgebung bestand nur aus statischen Hindernisobjekten, welche sich sowohl während des Kartografierens als auch bei späterer Positionsbestimmung nicht verändert haben.
 Eine Fortführung des gezeigten Ansatzes ist hinsichtlich der Robustheit gegenüber dynamischen Objekten in der Arbeitsumgebung zu untersuchen und ggf. anzupassen.
 
-\ \ \
+#v(1fr)
+
 #bibliography("/refs.bib", style: "ieee", title: "Literaturverzeichnis")
